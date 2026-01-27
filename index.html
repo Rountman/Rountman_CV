@@ -1,0 +1,429 @@
+<!doctype html>
+<html lang="cs">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Bc. Antonín Pecka</title>
+  <link rel="icon" type="image/x-icon" href="RountmanLogo.jpg">
+  <script>
+    window.tailwind = { config: { darkMode: 'class' } };
+  </script>
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Minimal theme tokens -->
+  <style>
+    /* LIGHT = default */
+    :root {
+      --background: #ffffff;
+      --foreground: #0b0b0c;
+      --muted-foreground: #4b5563;
+      --popover: #f4f5f7;
+      --border: #e5e7eb;
+      --primary: #4f46e5;
+      color-scheme: light;
+    }
+
+    .dark:root {
+      --background: #0b0b0c;
+      --foreground: #f5f6f7;
+      --muted-foreground: #9aa0a6;
+      --popover: #1a1c1f;
+      --border: #2b2f34;
+      --primary: #6366f1;
+      color-scheme: dark;
+    }
+
+    .bg-background {
+      background-color: var(--background)
+    }
+
+    .text-foreground {
+      color: var(--foreground)
+    }
+
+    .text-muted-foreground {
+      color: var(--muted-foreground)
+    }
+
+    .bg-popover {
+      background-color: var(--popover)
+    }
+
+    .bg-border {
+      background-color: var(--border)
+    }
+
+    .ring-primary {
+      --tw-ring-color: var(--primary)
+    }
+
+    .border-border {
+      border-color: var(--border)
+    }
+  </style>
+
+  <!-- React UMD + Babel -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+
+<body class="min-h-screen bg-background text-foreground antialiased">
+  <div id="root"></div>
+
+  <script type="text/babel">
+    // --- light stubs for framer-motion + icons (emoji) ---
+    const AnimatePresence = ({ children }) => children;
+    const motion = new Proxy({}, { get: (_, tag) => { const T = tag; return ({ children, ...p }) => React.createElement(T, p, children) } });
+    const Ico = ({ label, emoji, className = "h-4 w-4" }) => <span className={className} role="img" aria-label={label} title={label} style={{ display: "inline-block" }}>{emoji}</span>;
+    const Briefcase = (p) => <Ico label="work" emoji="💼" {...p} />; const Calendar = (p) => <Ico label="calendar" emoji="📅" {...p} />;
+    const MapPin = (p) => <Ico label="company" emoji="📍" {...p} />; const Github = (p) => <Ico label="GitHub" emoji="🐙" {...p} />;
+    const Linkedin = (p) => <Ico label="LinkedIn" emoji="💼" {...p} />; const Mail = (p) => <Ico label="e-mail" emoji="✉️" {...p} />;
+    const Moon = (p) => <Ico label="dark" emoji="🌙" {...p} />; const Sun = (p) => <Ico label="light" emoji="☀️" {...p} />;
+    const Download = (p) => <Ico label="download" emoji="⬇️" {...p} />; const ExternalLink = (p) => <Ico label="link" emoji="🔗" {...p} />;
+    const Code2 = (p) => <Ico label="code" emoji="🧩" {...p} />; const BookOpen = (p) => <Ico label="study" emoji="📖" {...p} />;
+    const Sparkles = (p) => <Ico label="skills" emoji="✨" {...p} />;
+
+    // --- shadcn-like primitives ---
+    const Button = ({ variant = "default", size = "md", className = "", ...props }) => {
+      const base = "inline-flex items-center justify-center rounded-lg px-3 py-2 text-sm transition";
+      const v = variant === "outline" ? "border border-border bg-transparent hover:bg-popover" : "bg-indigo-600 hover:bg-indigo-500";
+      const s = size === "icon" ? "h-9 w-9 p-0" : ""; return <button className={`${base} ${v} ${s} ${className}`} {...props} />;
+    };
+    const Card = ({ className = "", ...props }) => <div className={`rounded-xl border border-border bg-popover ${className}`} {...props} />;
+    const CardHeader = ({ className = "", ...props }) => <div className={`p-4 ${className}`} {...props} />;
+    const CardTitle = ({ className = "", ...props }) => <h3 className={`font-semibold ${className}`} {...props} />;
+    const CardContent = ({ className = "", ...props }) => <div className={`p-4 pt-0 ${className}`} {...props} />;
+
+    // ---- CONTENT DATA ----
+    const EXPERIENCES = [
+      { id: "exp-blendscan", role: "Android developer", company: "Blendlens", start: "2025-10", end: "Present", summary_en: "Developing a Kotlin-based Blendscan application.", summary_cs: "Vývoj aplikace Blendscan v jazyce Kotlin.", color: "bg-amber-500" },
+      { id: "exp-pmi", role: "IT Intern · IT Operations & Data Analyst", company: "Philip Morris International", start: "2025-02", end: "2025-10", summary_en: "Data analysis and reporting in Power BI/SQL. Supported and coordinated a company-wide IT systems upgrade in a production environment, including planning support and deployment tracking.", summary_cs: "Analýza dat a reporting v Power BI/SQL. Koordinace celopodnikového upgradu IT systémů v produkčním prostředí, včetně podpory plánování a sledování nasazení.", color: "bg-indigo-500" },
+      { id: "exp-madmonq", role: "Discord Services Developer", company: "MADMONQ®", start: "2022-01", end: "Present", summary_en: "Operates Node.js services for Discord automation and role management.", summary_cs: "Provoz Node.js služeb pro Discord – automatizace a správa rolí.", color: "bg-fuchsia-500" },
+      { id: "exp-mikroklima", role: "Software Engineer", company: "MIKROKLIMA s.r.o.", start: "2021-01", end: "2023-12", summary_en: "Embedded Wizard UIs, WPF modernization, Modbus/TCP tooling.", summary_cs: "UI v Embedded Wizard, modernizace WPF, nástroje pro Modbus/TCP.", color: "bg-green-500" },
+      { id: "exp-ar", role: "AR Applications (Side Projects)", company: "Personal", start: "2020-01", end: "2023-12", summary_en: "Unity + C#, Blender modeling; AR demos on GitHub.", summary_cs: "Unity + C#, modelování v Blenderu; AR dema na GitHubu.", color: "bg-yellow-500" },
+    ];
+
+    const PROJECTS = [
+      { id: "proj-blendscan", title: "Blendscan", summary_en: "Android app.", summary_cs: "Android app.", stack: ["Kotlin", "Android Studio", "Jetpack Compose", "Azure"], href: "https://blendscan.com/" },
+      { id: "proj-aradv", title: "ARAdventure", summary_en: "Unity AR mini-game / demo.", summary_cs: "Unity AR mini hra / demo.", stack: ["Unity", "C#"], href: "https://github.com/Rountman/ARAdventure" },
+      { id: "proj-discord", title: "Discord bot", summary_en: "Automation and server management bot.", summary_cs: "Bot pro automatizaci a správu serveru.", stack: ["Node.js"]},
+      { id: "proj-uhkheli", title: "UHK-HelicopterAR", summary_en: "AR helicopter shader/AR experiments.", summary_cs: "AR helikoptéra – shader/AR experimenty.", stack: ["Unity"], href: "https://github.com/Rountman/UHK-HelicopterAR" },
+    ];
+
+    const STUDIES = [
+      { id: "study-uhk", school: "FIM UHK – Information Management", field_en: "Masters studies", field_cs: "Ing. studium", start: "2022-09", end: "Present", summary_en: "Information Management, University of Hradec Králové.", summary_cs: "Informační management, Univerzita Hradec Králové." },
+      { id: "study-spse", school: "SPŠE a VOŠ Pardubice", field_en: "Secondary school (matura)", field_cs: "Střední škola (maturita)", start: "2018-09", end: "2022-06", summary_en: "Programming & HW.", summary_cs: "Programování & HW." },
+    ];
+
+    const SKILLS = [
+      {
+        group: "Programming Languages",
+        items: ["JavaScript", "TypeScript", "C#", "Kotlin"],
+      },
+      {
+        group: "Frontend Development",
+        items: ["React", "Tailwind CSS"],
+      },
+      {
+        group: "Backend & Tools",
+        items: [".NET", "Node.js", "Azure", "Git"],
+      },
+      {
+        group: "Data Analyst",
+        items: ["Power BI", "Power Query", "SQL Query", "MSSQL"],
+      },
+      {
+        group: "Android Development",
+        items: ["Android Studio", "Jetpack Compose"],
+      },
+      {
+        group: "Game & XR Development",
+        items: ["Unity", "Unreal Engine", "AR", "VR"],
+      },
+      {
+        group: "Desktop & Embedded Systems",
+        items: ["WPF", "Embedded Wizard", "Modbus/TCP"],
+      },
+    ];
+
+    const STRINGS = {
+      en: {
+        tagline: "IT student · Junior Game · Backend Developer",
+        email: "Email",
+        download: "Download PDF",
+        studies: "Studies",
+        about: "About me",
+        aboutText: "I am a curious, hands-on developer who learns by creating. My background includes Java (academic projects), C# in Unity and .NET, and JavaScript for automation and Discord bots. I am actively looking for a programmer position where I can grow and contribute, with the long-term goal of continuing my career from Poland. I enjoy turning ideas into working software, writing clear code, and iterating fast. Outside of coding, I maintain a healthy lifestyle and care for my mental well-being to stay balanced and focused.",
+        projects: "Projects",
+        period: (s, e) => `${s} — ${e}`,
+        color: "Color",
+        timelineNote: "Career timeline.",
+        openTo: (y) => `© ${y} Antonín Pecka — open to collaborations.`,
+        skills: "Skills",
+        langBtn: "CZ",
+      },
+      cs: {
+        tagline: "IT student · Nadšený vývojář",
+        email: "E-mail",
+        download: "Stáhnout PDF",
+        studies: "Studium",
+        about: "O mně",
+        aboutText: "Jsem zvídavý a prakticky zaměřený vývojář, který se rád učí tvorbou. Pracoval jsem s Javou (školní projekty), C# v Unity a .NET a JavaScriptem pro automatizaci a Discord nástroje. Aktivně hledám pracovní příležitosti jako programátor a mým cílem je v budoucnu rozvíjet kariéru z Polska. Baví mě proměňovat nápady ve funkční software, psát přehledný kód a rychle iterovat. Mimo IT si udržuji zdravý životní styl a věnuji se péči o své mentální zdraví.",
+        projects: "Projekty",
+        period: (s, e) => `${s} — ${e}`,
+        color: "Barva",
+        timelineNote: "Časová osa pracovních zkušeností.",
+        openTo: (y) => `© ${y} Antonín Pecka — otevřen spolupracím.`,
+        skills: "Dovednosti",
+        langBtn: "EN",
+      }
+    };
+
+    // ---- utils (LOCALE-AWARE) ----
+    const parseYMD = (ymd) => { const [y, m] = ymd.split("-").map(Number); return new Date(y, (m || 1) - 1, 1); };
+    const localeFor = (lang) => (lang === "en" ? "en-US" : "cs-CZ");
+    function formatMonthYear(lang, date) {
+      return new Intl.DateTimeFormat(localeFor(lang), { month: "short", year: "numeric" }).format(date);
+    }
+    function formatYear(lang, date) {
+      return new Intl.DateTimeFormat(localeFor(lang), { year: "numeric" }).format(date);
+    }
+    function getMinMaxDates(items) {
+      const now = new Date();
+      const dates = items.flatMap(e => [parseYMD(e.start), (!e.end || e.end === "Present") ? now : parseYMD(e.end)]);
+      const min = new Date(Math.min(...dates.map(d => d.getTime()))); const max = new Date(Math.max(...dates.map(d => d.getTime())));
+      return { min, max };
+    }
+    function percentBetween(date, min, max) { const t = +date, a = +min, b = +max; if (a === b) return 50; return ((t - a) / (b - a)) * 100; }
+    function layoutIntervals(items, min, max) {
+      const now = new Date();
+      const ivs = items.map(e => {
+        const start = parseYMD(e.start); const end = (!e.end || e.end === "Present") ? now : parseYMD(e.end);
+        const left = percentBetween(start, min, max); const right = percentBetween(end, min, max);
+        return { id: e.id, start, end, left, width: Math.max(1, right - left), data: e };
+      }).sort((a, b) => a.start - b.start || b.end - a.end);
+      const lanes = []; for (const iv of ivs) { let lane = 0; while (lanes[lane] && lanes[lane] > iv.start) lane++; lanes[lane] = iv.end; iv.lane = lane; }
+      return { placed: ivs, laneCount: lanes.length };
+    }
+    function formatRange(lang, start, end) {
+      const s = formatMonthYear(lang, parseYMD(start));
+      const e = (!end || end === "Present")
+        ? (lang === "en" ? "Present" : "Současnost")
+        : formatMonthYear(lang, parseYMD(end));
+      return STRINGS[lang].period(s, e);
+    }
+
+    // ---- components ----
+    function Header({ dark, setDark, lang, setLang }) {
+      const t = STRINGS[lang];
+      return (
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div className="flex items-center gap-3">
+            <img
+              src="RountmanAvatar.jpg"
+              alt="Bc. Antonín Pecka"
+              className="h-20 w-20 rounded-full object-cover"
+            />
+            <div>
+              <h1 className="text-2xl font-bold tracking-tight">Bc. Antonín Pecka</h1>
+              <p className="text-sm text-muted-foreground">{t.tagline}</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <a className="inline-flex items-center gap-1 text-sm hover:underline" href="mailto:entonypecka@gmail.com"><Mail />entonypecka@gmail.com</a>
+            <a className="inline-flex items-center gap-1 text-sm hover:underline" href="https://github.com/rountman" target="_blank" rel="noreferrer"><Github />GitHub</a>
+            <a className="inline-flex items-center gap-1 text-sm hover:underline" href="https://www.linkedin.com/in/anton%C3%ADn-pecka-050543232/" target="_blank" rel="noreferrer"><Linkedin />LinkedIn</a>
+            <div className="mx-2 h-5 w-px bg-border" />
+            <Button variant="outline" size="icon" aria-label="Switch language" onClick={() => setLang(lang === "en" ? "cs" : "en")}>
+              {STRINGS[lang].langBtn}
+            </Button>
+            <Button variant="outline" size="icon" aria-label="Toggle theme" onClick={() => setDark(v => !v)}>
+              {dark ? <Sun /> : <Moon />}
+            </Button>
+            <Button className="gap-2" onClick={() => window.print()}>
+              <Download />{t.download}
+            </Button>
+          </div>
+        </div>
+      );
+    }
+
+    function TimeAxis({ items, hoverId, setHoverId, lang }) {
+      const { min, max } = React.useMemo(() => getMinMaxDates(items), [items]);
+      const years = React.useMemo(() => { const s = min.getFullYear(), e = max.getFullYear(); return Array.from({ length: e - s + 1 }, (_, i) => s + i); }, [min, max]);
+      const { placed, laneCount } = React.useMemo(() => layoutIntervals(items, min, max), [items, min, max]);
+      const axisY = 64, barH = 10, laneGap = 14, totalH = axisY + laneCount * laneGap + 24;
+
+      return (
+        <div className="mt-8 select-none">
+          <div className="relative isolate" style={{ height: totalH }}>
+            <div className="absolute left-0 right-0 h-px bg-border" style={{ top: axisY }} />
+            {years.map((y) => {
+              const d = new Date(y, 0, 1); const x = percentBetween(d, min, max);
+              return (
+                <div key={y} className="absolute" style={{ left: `${x}%`, top: axisY }}>
+                  <div className="h-3 w-px -translate-x-1/2 bg-white/40 translate-y-[-12px]" />
+                  <div className="absolute top-1.5 -translate-x-1/2 text-xs text-muted-foreground">{formatYear(lang, d)}</div>
+                </div>
+              );
+            })}
+            <AnimatePresence>
+              {placed.map((iv) => {
+                const active = hoverId === iv.id; const top = axisY - (iv.lane + 1) * laneGap - barH / 2;
+                return (
+                  <motion.button key={iv.id}
+                    onMouseEnter={() => setHoverId(iv.id)} onMouseLeave={() => setHoverId(null)}
+                    className={`absolute rounded-sm transition-opacity focus:outline-none ${active ? "z-50 opacity-100" : "z-20 opacity-85" }`}
+                    style={{ left: `${iv.left}%`, width: `${iv.width}%`, top, height: barH }}>
+                    <div className={`h-full w-full rounded-sm ${iv.data.color} transition-transform`}
+                      style={{ transform: active ? "scaleY(1.8)" : "scaleY(1)", transformOrigin: "center" }} />
+                    {active && (
+                      <div className="absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-popover px-3 py-1 text-xs shadow-md z-50 pointer-events-none">
+                        <span className="font-medium">{iv.data.role}</span>
+                      </div>
+                    )}
+                  </motion.button>
+                );
+              })}
+            </AnimatePresence>
+          </div>
+          <p className="mt-2 flex items-center gap-2 text-sm text-muted-foreground">
+            <Calendar /> {STRINGS[lang].timelineNote}
+          </p>
+        </div>
+      );
+    }
+
+    function PositionCard({ item, active, onHover, lang }) {
+      return (
+        <li onMouseEnter={() => onHover(item.id)} onMouseLeave={() => onHover(null)} className="list-none">
+          <Card className={`overflow-hidden transition-shadow ${active ? "ring-2 ring-primary" : "hover:shadow-lg"}`}>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-lg flex items-center gap-2"><Briefcase /><span>{item.role}</span></CardTitle>
+              <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
+                <span className="inline-flex items-center gap-1"><Calendar />{formatRange(lang, item.start, item.end)}</span>
+                <span className="inline-flex items-center gap-1"><MapPin /> {item.company}</span>
+                <span className="inline-flex items-center gap-1"><Code2 />{STRINGS[lang].color}: <span className={`ml-1 inline-block h-3 w-3 rounded-sm align-middle ${item.color}`} /></span>
+              </div>
+            </CardHeader>
+            <CardContent className="pt-0 text-sm text-muted-foreground">
+              {lang === "en" ? item.summary_en : item.summary_cs}
+            </CardContent>
+          </Card>
+        </li>
+      );
+    }
+    const PositionList = ({ items, hoverId, setHoverId, lang }) => (
+      <ol className="mt-6 grid gap-4">{items.map(it => <PositionCard key={it.id} item={it} active={hoverId === it.id} onHover={setHoverId} lang={lang} />)}</ol>
+    );
+
+    function StudiesBlock({ items, lang }) {
+      const t = STRINGS[lang];
+      return (
+        <Card>
+          <CardHeader className="pb-2"><CardTitle className="flex items-center gap-2"><BookOpen /> {t.studies}</CardTitle></CardHeader>
+          <CardContent className="space-y-3 text-sm">
+            {items.map(s => (
+              <div key={s.id}>
+                <p className="font-medium">{s.school} — {lang === "en" ? s.field_en : s.field_cs}</p>
+                <p className="text-muted-foreground">{formatRange(lang, s.start, s.end)}</p>
+                <p>{lang === "en" ? s.summary_en : s.summary_cs}</p>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      );
+    }
+
+    function SkillsBlock({ items, lang }) {
+      const t = STRINGS[lang];
+      return (
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="flex items-center gap-2"><Sparkles />{t.skills}</CardTitle>
+          </CardHeader>
+          <CardContent className="pt-0 space-y-3">
+            {items.map(g => (
+              <div key={g.group}>
+                <p className="text-sm font-medium mb-1">{g.group}</p>
+                <div className="flex flex-wrap gap-2">
+                  {g.items.map((x, i) => (
+                    <span key={i} className="rounded-md border border-border px-2 py-1 text-xs/5">{x}</span>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      );
+    }
+
+    function AboutAndProjects({ lang }) {
+      const t = STRINGS[lang];
+      return (
+        <div className="mt-6 grid gap-6 md:grid-cols-3">
+          <Card className="md:col-span-2">
+            <CardHeader className="pb-2"><CardTitle className="text-xl">{t.about}</CardTitle></CardHeader>
+            <CardContent className="pt-0 text-sm text-muted-foreground">{t.aboutText}</CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-2"><CardTitle className="text-xl">{t.projects}</CardTitle></CardHeader>
+            <CardContent className="pt-0 space-y-3">
+              {PROJECTS.map(p => (
+                <a key={p.id} href={p.href} target="_blank" rel="noreferrer" className="block">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <p className="font-medium leading-tight">{p.title}</p>
+                      <p className="text-sm text-muted-foreground">{lang === "en" ? p.summary_en : p.summary_cs}</p>
+                    </div>
+                    <ExternalLink className="h-4 w-4 mt-1" />
+                  </div>
+                  <p className="mt-1 text-xs">{p.stack.join(" · ")}</p>
+                </a>
+              ))}
+            </CardContent>
+          </Card>
+        </div>
+      );
+    }
+
+    function CVTimeline() {
+      const [dark, setDark] = React.useState(true);
+      const [hoverId, setHoverId] = React.useState(null);
+      const [lang, setLang] = React.useState("en"); // default EN
+
+      React.useEffect(() => {
+        document.documentElement.classList.toggle("dark", dark);
+        document.documentElement.lang = (lang === "en" ? "en" : "cs");
+      }, [dark, lang]);
+
+      return (
+        <div className="min-h-screen bg-background text-foreground antialiased print:bg-white print:text-black">
+          <div className="mx-auto max-w-5xl px-4 py-8 md:py-12">
+            <Header dark={dark} setDark={setDark} lang={lang} setLang={setLang} />
+            <div className="grid gap-6 md:grid-cols-3 mt-6">
+              <div className="md:col-span-2">
+                <StudiesBlock items={STUDIES} lang={lang} />
+                <AboutAndProjects lang={lang} />
+              </div>
+              <SkillsBlock items={SKILLS} lang={lang} />
+            </div>
+            <TimeAxis items={EXPERIENCES} hoverId={hoverId} setHoverId={setHoverId} lang={lang} />
+            <PositionList items={EXPERIENCES} hoverId={hoverId} setHoverId={setHoverId} lang={lang} />
+            <footer className="mt-12 border-t border-border pt-6 text-sm text-muted-foreground">
+              <p>{STRINGS[lang].openTo(new Date().getFullYear())}</p>
+            </footer>
+          </div>
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<CVTimeline />);
+  </script>
+</body>
+
+</html>
