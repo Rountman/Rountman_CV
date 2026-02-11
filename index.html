@@ -5,15 +5,14 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Bc. Antonín Pecka</title>
+  <meta name="description" content="Antonín Pecka – Backend Developer focused on C#, .NET and Unreal Engine. Portfolio, projects and contact information.">
   <link rel="icon" type="image/x-icon" href="RountmanLogo.jpg">
   <script>
     window.tailwind = { config: { darkMode: 'class' } };
   </script>
 
-  <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- Minimal theme tokens -->
   <style>
     /* LIGHT = default */
     :root {
@@ -65,7 +64,6 @@
     }
   </style>
 
-  <!-- React UMD + Babel -->
   <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -75,7 +73,6 @@
   <div id="root"></div>
 
   <script type="text/babel">
-    // --- light stubs for framer-motion + icons (emoji) ---
     const AnimatePresence = ({ children }) => children;
     const motion = new Proxy({}, { get: (_, tag) => { const T = tag; return ({ children, ...p }) => React.createElement(T, p, children) } });
     const Ico = ({ label, emoji, className = "h-4 w-4" }) => <span className={className} role="img" aria-label={label} title={label} style={{ display: "inline-block" }}>{emoji}</span>;
@@ -87,7 +84,6 @@
     const Code2 = (p) => <Ico label="code" emoji="🧩" {...p} />; const BookOpen = (p) => <Ico label="study" emoji="📖" {...p} />;
     const Sparkles = (p) => <Ico label="skills" emoji="✨" {...p} />;
 
-    // --- shadcn-like primitives ---
     const Button = ({ variant = "default", size = "md", className = "", ...props }) => {
       const base = "inline-flex items-center justify-center rounded-lg px-3 py-2 text-sm transition";
       const v = variant === "outline" ? "border border-border bg-transparent hover:bg-popover" : "bg-indigo-600 hover:bg-indigo-500";
@@ -98,7 +94,6 @@
     const CardTitle = ({ className = "", ...props }) => <h3 className={`font-semibold ${className}`} {...props} />;
     const CardContent = ({ className = "", ...props }) => <div className={`p-4 pt-0 ${className}`} {...props} />;
 
-    // ---- CONTENT DATA ----
     const EXPERIENCES = [
       { id: "exp-blendscan", role: "Android developer", company: "Blendlens", start: "2025-10", end: "Present", summary_en: "Developing a Kotlin-based Blendscan application.", summary_cs: "Vývoj aplikace Blendscan v jazyce Kotlin.", color: "bg-amber-500" },
       { id: "exp-pmi", role: "IT Intern · IT Operations & Data Analyst", company: "Philip Morris International", start: "2025-02", end: "2025-10", summary_en: "Data analysis and reporting in Power BI/SQL. Supported and coordinated a company-wide IT systems upgrade in a production environment, including planning support and deployment tracking.", summary_cs: "Analýza dat a reporting v Power BI/SQL. Koordinace celopodnikového upgradu IT systémů v produkčním prostředí, včetně podpory plánování a sledování nasazení.", color: "bg-indigo-500" },
@@ -183,7 +178,6 @@
       }
     };
 
-    // ---- utils (LOCALE-AWARE) ----
     const parseYMD = (ymd) => { const [y, m] = ymd.split("-").map(Number); return new Date(y, (m || 1) - 1, 1); };
     const localeFor = (lang) => (lang === "en" ? "en-US" : "cs-CZ");
     function formatMonthYear(lang, date) {
@@ -217,7 +211,6 @@
       return STRINGS[lang].period(s, e);
     }
 
-    // ---- components ----
     function Header({ dark, setDark, lang, setLang }) {
       const t = STRINGS[lang];
       return (
