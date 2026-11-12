@@ -90,25 +90,21 @@ const span = `${Math.min(...years)}–${new Date().getFullYear()}`;
       <span class="scene-count" data-scene-counter aria-hidden="true">01 / {String(projects.length).padStart(2, '0')}</span>
     </section>
 
-    <!-- SKILLS -->
-    <section class="block wrap" aria-labelledby="skills-h">
-      <div class="head">
+    <!-- TOOLS: 3D tunel (bez JS / reduced motion = seznam s flex-wrap) -->
+    <section class="tools wrap-pad" data-tunnel aria-labelledby="skills-h">
+      <div class="tunnel-center">
         <h2 id="skills-h">Tools</h2>
-        <p>What I have shipped with, grouped by where it runs.</p>
+        <p class="tunnel-group" data-tunnel-group aria-hidden="true">{skills[0].group}</p>
       </div>
-      <div class="rule" data-rule></div>
-      <div class="skills" style="margin-top:2.5rem">
-        {skills.map((g) => (
-          <div>
-            <h3>{g.group}</h3>
-            <ul>{g.items.map((s) => <li>{s}</li>)}</ul>
-          </div>
-        ))}
-      </div>
+      <ul class="tunnel" role="list">
+        {skills.flatMap((g) => g.items.map((s) => (
+          <li data-z data-group={g.group}>{s}<span class="g">{g.group}</span></li>
+        )))}
+      </ul>
     </section>
 
     <!-- STUDIES -->
-    <section class="block wrap" aria-labelledby="edu-h" style="padding-top:0">
+    <section class="block wrap" aria-labelledby="edu-h">
       <div class="head">
         <h2 id="edu-h">Studies</h2>
         <p>Still studying, part time.</p>

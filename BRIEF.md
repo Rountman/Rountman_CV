@@ -30,7 +30,8 @@
 | About | slova odstavce se rozsvěcují | při průjezdu | `data-scrub-words` |
 | Work | **hlavní moment**: horizontální pás kariéry, velký letopočet 2020 → 2026 | pin, délka = šířka pásu | `data-horizontal` |
 | Projects | položky kusovníku jako scény: přiletí z hloubky, drží, odletí k divákovi; počítadlo „03 / 05“ | pin 5 × 80 % (+400 %) | `data-depth-scenes` |
-| Tools, Studies | klidné | – | – |
+| Tools | 3D tunel: dovednosti letí z hloubky kolem nápisu „Tools“, pod ním skupina nejbližší položky | pin +400 % | `data-tunnel` |
+| Studies | klidné | – | – |
 | Contact | velký e-mail | – | hover podtržení |
 
 ## 5. Assety

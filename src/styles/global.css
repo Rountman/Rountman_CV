@@ -288,6 +288,7 @@ section { position: relative; }
 .depth-on .scene .src { justify-self: auto; }
 .depth-on .scene-count {
   display: block;
+  transition: opacity 0.3s;
   position: absolute;
   right: max(var(--gutter), (100% - var(--max)) / 2);
   bottom: 2.5rem;
@@ -296,11 +297,53 @@ section { position: relative; }
   font-variant-numeric: tabular-nums;
 }
 
-/* ───── Skills ───── */
-.skills { display: grid; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); gap: 2.5rem 2rem; }
-.skills h3 { font-size: var(--t-sm); font-weight: 600; margin-bottom: 0.75rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--line); }
-.skills ul { list-style: none; margin: 0; padding: 0; }
-.skills li { font-family: var(--text); font-size: var(--t-md); line-height: 1.35; }
+/* ───── Tools (3D tunel) ───── */
+.tools { padding-block: clamp(6rem, 14vw, 11rem); }
+.tunnel-center h2 { font-family: var(--display); font-stretch: 75%; font-weight: 700; font-size: var(--t-xl); line-height: 1; }
+.tunnel-group { display: none; }
+.tunnel { list-style: none; margin: 2.5rem 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.75rem 2.25rem; }
+.tunnel li { font-size: var(--t-md); line-height: 1.3; }
+.tunnel .g { display: block; color: var(--ink-soft); font-size: var(--t-sm); }
+
+/* 3D režim: zapíná ho JS třídou .tunnel-on */
+.tools.tunnel-on {
+  height: 100svh;
+  padding-block: 0;
+  overflow: clip;
+  perspective: 900px;
+}
+.tunnel-on .tunnel-center {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: grid;
+  place-content: center;
+  text-align: center;
+  pointer-events: none;
+  text-shadow: 0 0 1.5rem var(--paper), 0 0 0.5rem var(--paper); /* čitelnost přes vzdálené položky */
+}
+.tunnel-on .tunnel-center h2 { font-size: clamp(4rem, 2rem + 9vw, 11rem); line-height: 0.9; }
+.tunnel-on .tunnel-group { display: block; margin-top: 0.75rem; color: var(--cobalt); font-variant-numeric: tabular-nums; }
+.tunnel-on .tunnel {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  display: block;
+  transform-style: preserve-3d;
+}
+.tunnel-on .tunnel li {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  white-space: nowrap;
+  font-family: var(--display);
+  font-stretch: 75%;
+  font-weight: 700;
+  font-size: clamp(1.4rem, 1rem + 1.2vw, 2.4rem);
+  visibility: hidden;
+  will-change: transform;
+}
+.tunnel-on .tunnel .g { display: none; }
 
 /* ───── Studies ───── */
 .studies { list-style: none; margin: 0; padding: 0; }
@@ -342,8 +385,7 @@ section { position: relative; }
   .scene { grid-template-columns: 4.5rem minmax(0, 1fr); }
   .depth-on .scene .part { font-size: clamp(2.5rem, 13vw, 4rem); }
   .studies li { grid-template-columns: 1fr; gap: 0.25rem; }
-  .skills { grid-template-columns: 1fr 1fr; gap: 2rem 1.25rem; }
-  .skills li { font-size: var(--t-base); }
+  .tunnel li { font-size: var(--t-base); }
 }
 
 @media (prefers-reduced-motion: reduce) {

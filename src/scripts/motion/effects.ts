@@ -11,6 +11,8 @@ import { gsap, SplitText, ScrollTrigger, ease, dur } from './core';
  *  data-depth-scenes     sekce s .scene uvnitř → JS přidá .depth-on, scény jsou na středu přes sebe;
  *                         pin, každá přiletí z hloubky, chvíli drží a odletí k divákovi;
  *                         [data-scene-counter] ukazuje „03 / 05“
+ *  data-tunnel           sekce s [data-z] položkami → JS přidá .tunnel-on, pin, 3D tunel: položky na zlatém
+ *                         úhlu, kamera (proxy camZ) jimi proletí; [data-tunnel-group] = skupina nejbližší položky
  *  data-scrub-words       odstavec, jehož slova se rozsvěcují podle scrollu
  *  data-horizontal        sekce s .h-track uvnitř → pin + horizontální posun
  *  data-year-counter      (uvnitř data-horizontal) velký letopočet podle aktivní karty
@@ -80,6 +82,7 @@ export function depthScenes(desktop: boolean) {
           const o = Number(gsap.getProperty(s, 'opacity'));
           if (o > bestO) { bestO = o; best = i; }
         });
+        if (counter) counter.style.opacity = bestO > 0.01 ? '1' : '0';
         // nic vidět (před první / po poslední scéně) → počítadlo nech, jak je
         if (bestO > 0.01 && best !== current && counter) {
           current = best;
@@ -101,6 +104,69 @@ export function depthScenes(desktop: boolean) {
         .to(s, { autoAlpha: 0, scale: desktop ? 2.4 : 1.8, ...blur(8), duration: OUT }, t + IN + HOLD);
     });
     cleanups.push(() => section.classList.remove('depth-on'));
+  });
+  return () => cleanups.forEach((c) => c());
+}
+
+/**
+ * 3D tunel. Položka i leží na úhlu i × 137.5° (zlatý úhel), poloměr 18–42 vw/vh
+ * (mobil svisle 12–34 vh; vodorovně zůstává 18–42 vw, na úzkém displeji je to i tak málo), z = −i × krok. Kamera = proxy camZ; v onUpdate se píše
+ * translate3d jen viditelným položkám. Opacity podle relativního z.
+ */
+export function tunnel(desktop: boolean) {
+  const cleanups: (() => void)[] = [];
+  gsap.utils.toArray<HTMLElement>('[data-tunnel]').forEach((section) => {
+    const items = gsap.utils.toArray<HTMLElement>('[data-z]', section);
+    if (!items.length) return;
+    const label = section.querySelector<HTMLElement>('[data-tunnel-group]');
+    const STEP = desktop ? 350 : 300;
+    const RX = [18, 42], RY = desktop ? [18, 42] : [12, 34]; // vw, vh
+    const FAR = -3500, FAR_IN = -2500, NEAR = 200, GONE = 700;
+
+    const pts = items.map((el, i) => {
+      const a = (i * 137.5 * Math.PI) / 180;
+      const t = (i * 0.618034) % 1; // rovnoměrně rozprostřený poloměr, nic přesně uprostřed
+      const rx = RX[0] + (RX[1] - RX[0]) * t, ry = RY[0] + (RY[1] - RY[0]) * t;
+      return { el, x: Math.cos(a) * rx, y: Math.sin(a) * ry, z: -i * STEP, group: el.dataset.group ?? '', shown: false };
+    });
+
+    section.classList.add('tunnel-on');
+    const cam = { z: 0 };
+    let group = '';
+    const render = () => {
+      let nearest = pts[0], nearestD = Infinity;
+      for (const p of pts) {
+        const rel = p.z + cam.z;
+        const d = Math.abs(rel);
+        if (d < nearestD) { nearestD = d; nearest = p; }
+        const visible = rel > FAR && rel < GONE;
+        if (!visible) {
+          if (p.shown) { p.el.style.visibility = 'hidden'; p.shown = false; }
+          continue;
+        }
+        const o = rel < FAR_IN ? (rel - FAR) / (FAR_IN - FAR) : rel > NEAR ? 1 - (rel - NEAR) / (GONE - NEAR) : 1;
+        if (!p.shown) { p.el.style.visibility = 'visible'; p.shown = true; }
+        p.el.style.opacity = o.toFixed(3);
+        p.el.style.transform = `translate(-50%, -50%) translate3d(${p.x.toFixed(2)}vw, ${p.y.toFixed(2)}vh, ${rel.toFixed(1)}px)`;
+      }
+      if (label && nearest.group !== group) {
+        group = nearest.group;
+        label.textContent = group;
+      }
+    };
+
+    gsap.to(cam, {
+      z: items.length * STEP + 1200, // poslední položka skončí na rel. z = krok + 1200 > 700, tj. za kamerou
+      ease: ease.scrub,
+      onUpdate: render,
+      scrollTrigger: { trigger: section, start: 'top top', end: '+=400%', pin: true, scrub: 0.6 },
+    });
+    render();
+
+    cleanups.push(() => {
+      section.classList.remove('tunnel-on');
+      items.forEach((el) => { el.style.removeProperty('visibility'); el.style.removeProperty('opacity'); el.style.removeProperty('transform'); });
+    });
   });
   return () => cleanups.forEach((c) => c());
 }
