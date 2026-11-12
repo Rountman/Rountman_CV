@@ -29,7 +29,7 @@ export async function initMotion() {
       if (desktop) cleanups.push(initLenis());
       // piny vytvářej v pořadí, v jakém jsou na stránce (jinak nesedí start/end následujících)
       cleanups.push(intro(), frameScrubbers());
-      heroZoom(desktop);
+      cleanups.push(heroZoom(desktop));
       cleanups.push(scrubWords());
       if (desktop) horizontal();
       rules();

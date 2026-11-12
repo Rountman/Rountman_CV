@@ -26,11 +26,11 @@
 ## 4. Storyboard (scroll)
 | Sekce | Co se děje | Rozsah scrollu | Efekt |
 |---|---|---|---|
-| Hero | jméno vyjede po znacích; při scrollu se zvětšuje a rozšiřuje, divák jím „proletí“ | pin +80 % | `data-intro`, `data-hero-zoom` |
+| Hero | jméno vyjede po znacích; při scrollu se zvětšuje a rozšiřuje, divák jím „proletí“ | pin +80 %, dojezd +100 % | `data-intro`, `data-hero-zoom` |
 | About | slova odstavce se rozsvěcují | při průjezdu | `data-scrub-words` |
 | Work | **hlavní moment**: horizontální pás kariéry, velký letopočet 2020 → 2026 | pin, délka = šířka pásu | `data-horizontal` |
-| Projects | položky kusovníku jako scény: přiletí z hloubky, drží, odletí k divákovi; počítadlo „03 / 05“ | pin 5 × 80 % (+400 %) | `data-depth-scenes` |
-| Tools | 3D tunel: dovednosti letí z hloubky kolem nápisu „Tools“, pod ním skupina nejbližší položky | pin +320 % | `data-tunnel` |
+| Projects | položky kusovníku jako scény: přiletí z hloubky, drží, odletí k divákovi; počítadlo „03 / 05“ | 5 × 80 % (+400 %): pin +300 %, dojezd +100 % | `data-depth-scenes` |
+| Tools | 3D tunel: dovednosti letí z hloubky kolem nápisu „Tools“, pod ním skupina nejbližší položky | +320 %: pin +220 %, dojezd +100 % | `data-tunnel` |
 | Studies | klidné | – | – |
 | Contact | velký e-mail | – | hover podtržení |
 

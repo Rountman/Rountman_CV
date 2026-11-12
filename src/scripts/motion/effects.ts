@@ -35,22 +35,44 @@ export function intro() {
 }
 
 /**
+ * Pin s dojezdem. Sekce (přesně 100svh, třída .depth-on) je pinnutá `pinPct` %
+ * a animace dohrává dalších 100 % během odjezdu sekce nahoru. Po odpinování tak
+ * nikdy nezůstane prázdná obrazovka: obsah ještě dobíhá a zespodu už jede další sekce.
+ * Délku scrollu dává jen pin (pinSpacing), žádné okraje ani min-height navíc.
+ * Vrací vars pro scrollTrigger animace; pin vytvoří sám (musí vzniknout před animací).
+ */
+function pinWithTail(section: HTMLElement, pinPct: number, scrub: boolean | number): ScrollTrigger.Vars {
+  section.classList.add('depth-on');
+  const pin = ScrollTrigger.create({ trigger: section, start: 'top top', end: `+=${pinPct}%`, pin: true });
+  // start/end navázané přímo na pin: trigger = pinnutý prvek by jinak ScrollTrigger posunul o délku pinu
+  return {
+    start: () => pin.start,
+    end: () => pin.start + (window.innerHeight * (pinPct + 100)) / 100,
+    scrub,
+  };
+}
+
+/**
  * Zoom k divákovi. Mobil: menší zvětšení a bez blur (výkon).
  * fontStretch je jediná povolená animace mimo transform/opacity/filter (jen hero nadpis).
+ * Pin +80 %, animace +180 % (zbytek zoomu a fade dobíhá, zatímco hero odjíždí).
  */
 export function heroZoom(desktop: boolean) {
+  const cleanups: (() => void)[] = [];
   gsap.utils.toArray<HTMLElement>('[data-hero-zoom]').forEach((section) => {
     const name = section.querySelector<HTMLElement>('[data-zoom-name]');
     const fades = section.querySelectorAll<HTMLElement>('[data-zoom-fade]');
     if (!name) return;
     const tl = gsap.timeline({
       defaults: { ease: ease.scrub },
-      scrollTrigger: { trigger: section, start: 'top top', end: '+=80%', pin: true, scrub: true },
+      scrollTrigger: pinWithTail(section, 80, true),
     });
     tl.to(name, { scale: desktop ? 3.2 : 1.8, fontStretch: '125%', transformOrigin: '50% 50%', duration: 1 }, 0)
       .to(name, desktop ? { opacity: 0, filter: 'blur(12px)', duration: 0.4 } : { opacity: 0, duration: 0.4 }, 0.6)
       .to(fades, { opacity: 0, scale: 0.9, duration: 0.2 }, 0);
+    cleanups.push(() => section.classList.remove('depth-on'));
   });
+  return () => cleanups.forEach((c) => c());
 }
 
 /**
@@ -69,7 +91,6 @@ export function depthScenes(desktop: boolean) {
     const IN = 1, HOLD = 0.4, OUT = 1, OVERLAP = 0.3;
     const step = IN + HOLD + OUT * (1 - OVERLAP);
 
-    section.classList.add('depth-on');
     gsap.set(scenes, { autoAlpha: 0, scale: 0.3, ...blur(16) });
 
     let current = -1;
@@ -89,14 +110,8 @@ export function depthScenes(desktop: boolean) {
           counter.textContent = `${pad(best + 1)} / ${pad(scenes.length)}`;
         }
       },
-      scrollTrigger: {
-        trigger: section,
-        start: 'top top',
-        end: () => `+=${scenes.length * 80}%`,
-        pin: true,
-        scrub: 0.6,
-        invalidateOnRefresh: true,
-      },
+      // animace = počet scén × 80 %, z toho posledních 100 % dobíhá při odjezdu sekce
+      scrollTrigger: pinWithTail(section, scenes.length * 80 - 100, 0.6),
     });
     scenes.forEach((s, i) => {
       const t = i * step;
@@ -131,6 +146,7 @@ export function tunnel(desktop: boolean) {
     });
 
     section.classList.add('tunnel-on');
+    const st = pinWithTail(section, 220, 0.6); // animace +320 %, z toho 100 % dojezd
     const cam = { z: 0 };
     let group = '';
     const render = () => {
@@ -161,12 +177,12 @@ export function tunnel(desktop: boolean) {
       z: (items.length - 1) * STEP + GONE + 200,
       ease: ease.scrub,
       onUpdate: render,
-      scrollTrigger: { trigger: section, start: 'top top', end: '+=320%', pin: true, scrub: 0.6 },
+      scrollTrigger: st,
     });
     render();
 
     cleanups.push(() => {
-      section.classList.remove('tunnel-on');
+      section.classList.remove('tunnel-on', 'depth-on');
       items.forEach((el) => { el.style.removeProperty('visibility'); el.style.removeProperty('opacity'); el.style.removeProperty('transform'); });
     });
   });

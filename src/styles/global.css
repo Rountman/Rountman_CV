@@ -263,13 +263,10 @@ section { position: relative; }
 
 /* 3D režim: zapíná ho JS třídou .depth-on (bez JS zůstává seznam výše) */
 .projects.depth-on {
-  height: 100svh;
-  padding-block: 6rem 2.5rem;
   display: grid;
   grid-template-rows: auto 1fr;
-  overflow: clip;
 }
-.depth-on .head { margin-bottom: 0; }
+.projects.depth-on .head { margin-bottom: 0; padding-top: 6rem; }
 .depth-on .scenes { position: relative; }
 .depth-on .scene {
   position: absolute;
@@ -306,12 +303,7 @@ section { position: relative; }
 .tunnel .g { display: block; color: var(--ink-soft); font-size: var(--t-sm); }
 
 /* 3D režim: zapíná ho JS třídou .tunnel-on */
-.tools.tunnel-on {
-  height: 100svh;
-  padding-block: 0;
-  overflow: clip;
-  perspective: 900px;
-}
+.tools.tunnel-on { perspective: 900px; }
 .tunnel-on .tunnel-center {
   position: absolute;
   inset: 0;
@@ -369,6 +361,17 @@ section { position: relative; }
 .contact .mail:hover { background-size: 100% 3px; }
 .contact .links { display: flex; gap: 2rem; margin-top: 3rem; flex-wrap: wrap; }
 .contact footer { display: flex; justify-content: space-between; margin-top: 7rem; font-size: var(--t-sm); color: var(--ink-soft); }
+
+/* ───── Pinnutá sekce (JS přidá .depth-on: hero, Projects, Tools) ─────
+   Přesně jedna obrazovka. Žádný padding-block ani min-height: délku scrollu dává
+   jen end / pinSpacing. Padding a normální výška platí jen pro fallback bez JS. */
+.hero.depth-on, .projects.depth-on, .tools.depth-on {
+  height: 100svh;
+  min-height: 0;
+  padding-block: 0;
+  overflow: clip;
+}
+.hero.depth-on .hero-foot { margin-bottom: 3rem; }
 
 /* ───── Mobil ───── */
 @media (max-width: 899px) {
