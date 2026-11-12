@@ -1,23 +1,29 @@
 /* ───── Tokens ───── */
 :root {
-  --paper: #e4e7ea;      /* studený rýsovací papír */
-  --paper-deep: #d6dade;
-  --ink: #1a1f3a;        /* indigo inkoust */
-  --ink-soft: #545a73;
-  --line: rgba(26, 31, 58, 0.18);
-  --cobalt: #2b45e0;     /* jediný akcent */
+  --bg: #0b0d12;
+  --fg: #e8eaf0;
+  --muted: #a9b0bf;
+  --line: rgba(232, 234, 240, 0.14);
+  --line-strong: rgba(232, 234, 240, 0.32);
 
-  /* jedna variabilní rodina: Archivo (wdth 62–125, wght 100–900) */
-  --display: 'Archivo', 'Arial Narrow', system-ui, sans-serif;
-  --text: 'Archivo', system-ui, sans-serif;
+  /* duhové barvy: jen 3D objekt a 2px progress bar, nikdy text */
+  --iris-1: #7fd6e8;
+  --iris-2: #9c8cff;
+  --iris-3: #f2a7d8;
+  --iris-4: #ffe3a3;
 
-  /* typografická škála (≈ 1.333) */
-  --t-sm: 0.875rem;
-  --t-base: 1.0625rem;
-  --t-md: 1.375rem;
-  --t-lg: clamp(1.75rem, 1.2rem + 1.8vw, 2.5rem);
-  --t-xl: clamp(2.25rem, 1.2rem + 3.4vw, 4.25rem);
-  --t-hero: clamp(4.5rem, 1rem + 17vw, 17rem);
+  /* Syne 600/800: jméno, nadpisy, role, projekty, e-mail. Geist 400/500: text, navigace, metadata */
+  --display: 'Syne', system-ui, sans-serif;
+  --text: 'Geist', system-ui, sans-serif;
+
+  /* typografická škála */
+  --t-sm: 0.9375rem;
+  --t-base: 1rem;
+  --t-md: clamp(1.0625rem, 0.95rem + 0.45vw, 1.3125rem);
+  --t-lg: clamp(1.375rem, 1rem + 1.1vw, 1.875rem);
+  --t-xl: clamp(2.75rem, 1.6rem + 3.4vw, 4.5rem);
+  --t-about: clamp(1.75rem, 1rem + 2.4vw, 3.25rem);
+  --t-hero: clamp(4rem, 11vw, 10.5rem);
 
   --gutter: clamp(1.25rem, 4vw, 3.5rem);
   --max: 88rem;
@@ -27,43 +33,26 @@
 html { -webkit-text-size-adjust: 100%; }
 body {
   margin: 0;
-  background-color: var(--paper);
-  /* rýsovací mřížka */
-  background-image:
-    linear-gradient(var(--line) 1px, transparent 1px),
-    linear-gradient(90deg, var(--line) 1px, transparent 1px);
-  background-size: 96px 96px;
-  background-position: -1px -1px;
-  background-attachment: fixed;
-  color: var(--ink);
+  background: var(--bg);
+  color: var(--fg);
   font-family: var(--text);
-  font-stretch: 100%;
   font-weight: 400;
   font-size: var(--t-base);
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
 }
-body::before { /* zjemnění mřížky */
-  content: '';
-  position: fixed;
-  inset: 0;
-  background: color-mix(in srgb, var(--paper) 72%, transparent);
-  pointer-events: none;
-  z-index: -1;
-}
 
 a { color: inherit; }
-a:focus-visible, button:focus-visible { outline: 2px solid var(--cobalt); outline-offset: 4px; border-radius: 2px; }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--fg); outline-offset: 4px; border-radius: 2px; }
 h1, h2, h3, p { margin: 0; }
 .wrap { width: min(100% - 2 * var(--gutter), var(--max)); margin-inline: auto; }
-/* jako .wrap, ale sekce je na plnou šířku: zvětšený obsah se ořízne až na okraji obrazovky */
 .wrap-pad { padding-inline: max(var(--gutter), (100% - var(--max)) / 2); }
 .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
 /* stav před animací (jen když běží motion) */
 .motion [data-intro] { visibility: hidden; }
 .motion [data-intro-fade] { opacity: 0; transform: translateY(14px); }
-.motion [data-intro-rise] { transform: translateY(14px); } /* vidět hned (LCP), jen posun */
+.motion [data-intro-rise] { transform: translateY(14px); }
 
 /* ───── Nav ───── */
 .nav {
@@ -73,16 +62,14 @@ h1, h2, h3, p { margin: 0; }
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  padding: 1.25rem var(--gutter);
+  padding: 1.375rem var(--gutter);
   font-size: var(--t-sm);
-  background: color-mix(in srgb, var(--paper) 82%, transparent);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: linear-gradient(var(--bg), rgba(11, 13, 18, 0));
 }
 .nav a { text-decoration: none; }
 .nav ul { display: flex; gap: 1.75rem; list-style: none; margin: 0; padding: 0; }
-.nav ul a { border-bottom: 1px solid transparent; transition: border-color 0.2s; }
-.nav ul a:hover { border-color: currentColor; }
+.nav ul a { color: var(--muted); transition: color 0.2s; }
+.nav ul a:hover { color: var(--fg); }
 
 /* ───── Hero ───── */
 .hero {
@@ -91,9 +78,9 @@ h1, h2, h3, p { margin: 0; }
   display: grid;
   align-content: end;
   padding-block: 7rem 3rem;
-  overflow: clip; /* zvětšené jméno nesmí roztáhnout stránku do šířky */
+  overflow: clip;
 }
-.hero-name { /* jméno přesně na středu obrazovky */
+.hero-name {
   position: absolute;
   inset: 0;
   display: grid;
@@ -103,38 +90,16 @@ h1, h2, h3, p { margin: 0; }
 .hero-name > div { pointer-events: auto; }
 .hero h1 {
   font-family: var(--display);
-  font-stretch: 62%;
   font-weight: 800;
-  font-size: min(24vw, 29svh);
-  line-height: 0.85;
-  letter-spacing: -0.01em;
-  text-transform: uppercase;
+  font-size: var(--t-hero);
+  line-height: 0.9;
+  letter-spacing: -0.03em;
   text-align: center;
   white-space: nowrap;
   will-change: transform;
 }
 .hero h1 .l2 { display: block; }
-/* maska řádků ze SplitText: víc místa nahoře, ať se neořízne čárka nad Í */
 .hero h1 > div { padding-top: 0.16em; margin-top: -0.16em; }
-
-.dim { /* kótovací čára 2020–2026 */
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  color: var(--cobalt);
-  font-size: var(--t-sm);
-}
-.dim::before, .dim::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: currentColor;
-}
-.dim span { white-space: nowrap; font-variant-numeric: tabular-nums; }
-.dim-ticks { position: relative; margin-top: 2.25rem; }
-.dim-ticks::before, .dim-ticks::after { content: ''; position: absolute; top: -2.7rem; width: 1px; height: 0.9rem; background: var(--cobalt); }
-.dim-ticks::before { left: 0; }
-.dim-ticks::after { right: 0; }
 
 .hero-foot {
   display: grid;
@@ -144,8 +109,8 @@ h1, h2, h3, p { margin: 0; }
   margin-top: 2.5rem;
   align-items: end;
 }
-.hero-foot p:first-child { font-size: var(--t-md); line-height: 1.4; }
-.hero-foot .meta { text-align: right; color: var(--ink-soft); font-size: var(--t-sm); }
+.hero-foot p:first-child { font-size: var(--t-md); line-height: 1.45; color: var(--muted); }
+.hero-foot .meta { text-align: right; color: var(--muted); font-size: var(--t-sm); }
 
 /* ───── Section heads ───── */
 .head {
@@ -155,29 +120,35 @@ h1, h2, h3, p { margin: 0; }
   align-items: baseline;
   margin-bottom: 3rem;
 }
-.head h2 { font-family: var(--display); font-stretch: 75%; font-weight: 700; font-size: var(--t-xl); line-height: 1; letter-spacing: -0.01em; }
-.head p { color: var(--ink-soft); font-size: var(--t-sm); }
-.rule { height: 1px; background: var(--ink); transform-origin: left; }
+.head h2, .projects h2, .tools-head h2 {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: var(--t-xl);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+.head p { color: var(--muted); font-size: var(--t-sm); }
+.rule { height: 1px; background: var(--line-strong); transform-origin: left; }
 
 section { position: relative; }
 .block { padding-block: clamp(6rem, 14vw, 11rem); }
 
 /* ───── About ───── */
 .about p {
-  font-family: var(--text);
-  font-size: var(--t-lg);
-  line-height: 1.22;
-  max-width: 30ch;
-  margin-left: auto;
-  margin-right: 8%;
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: var(--t-about);
+  line-height: 1.12;
+  letter-spacing: -0.015em;
+  max-width: 22ch;
 }
+.about .rest { color: var(--muted); }
 
 /* ───── Career (horizontal) ───── */
-/* desktop: levý pevný sloupec (nadpis, popis, letopočet, progress) + pravé okno, kterým jede pás */
 .career { overflow: hidden; }
 .career-inner {
   --side-w: max(22rem, 30vw);
-  --focus: 4vw; /* místo aktivní karty od levé hrany okna */
+  --focus: 4vw;
   height: 100svh;
   display: grid;
   grid-template-columns: var(--side-w) minmax(0, 1fr);
@@ -195,12 +166,10 @@ section { position: relative; }
 .career .year {
   display: block;
   font-family: var(--display);
-  font-stretch: 75%;
-  font-weight: 700;
-  font-size: clamp(6rem, 14vw, 13rem);
+  font-weight: 800;
+  font-size: clamp(5rem, 11vw, 10rem);
   line-height: 0.8;
   letter-spacing: -0.04em;
-  color: var(--cobalt);
   font-variant-numeric: lining-nums tabular-nums;
   pointer-events: none;
 }
@@ -208,7 +177,6 @@ section { position: relative; }
 .career-window {
   min-width: 0;
   overflow: hidden;
-  /* karty mizí do papíru, ne ostře uříznuté; konec přechodu = fokus, aktivní karta zůstává plně vidět */
   -webkit-mask-image: linear-gradient(to right, transparent 0, #000 var(--focus));
   mask-image: linear-gradient(to right, transparent 0, #000 var(--focus));
 }
@@ -216,17 +184,14 @@ section { position: relative; }
   display: flex;
   gap: clamp(2rem, 4vw, 4rem);
   --card-w: clamp(18rem, 26vw, 25rem);
-  /* na 0 % je první karta ve fokusu */
   padding-left: var(--focus);
-  /* % = šířka okna: levá hrana poslední karty může dojet do fokusu */
   padding-right: max(0px, calc(100% - var(--focus) - var(--card-w)));
   align-items: start;
   width: max-content;
   margin: 0;
   list-style: none;
 }
-/* bez JS / reduced motion: žádný pás, karty se zalomí v okně, nic se neořízne */
-@media (min-width: 900px) {
+@media (min-width: 800px) {
   html:not(.motion) .career-inner { height: auto; }
   html:not(.motion) .career-window { -webkit-mask-image: none; mask-image: none; }
   html:not(.motion) .h-track { flex-wrap: wrap; width: auto; row-gap: 3.5rem; padding-right: var(--gutter); }
@@ -235,182 +200,112 @@ section { position: relative; }
 .job {
   width: var(--card-w);
   padding-top: 1.25rem;
-  border-top: 1px solid var(--ink);
+  border-top: 1px solid var(--line-strong);
   transition: opacity 0.4s;
 }
-@media (min-width: 900px) {
+@media (min-width: 800px) {
   .motion .h-track .job { opacity: 0.35; }
   .motion .h-track .job.is-active { opacity: 1; }
 }
-.job .when { color: var(--cobalt); font-size: var(--t-sm); font-variant-numeric: tabular-nums; }
-.job h3 { font-family: var(--display); font-stretch: 75%; font-weight: 700; font-size: var(--t-lg); line-height: 1.05; margin: 0.6rem 0 0.35rem; }
-.job .co { font-weight: 600; font-size: var(--t-sm); }
-.job p.desc { color: var(--ink-soft); margin-top: 1rem; max-width: 36ch; }
-.progress { height: 2px; background: var(--paper-deep); position: relative; }
-.progress i { position: absolute; inset: 0; background: var(--cobalt); transform: scaleX(0); transform-origin: left; }
+.job .when { color: var(--muted); font-size: var(--t-sm); font-variant-numeric: tabular-nums; }
+.job h3 { font-family: var(--display); font-weight: 800; font-size: var(--t-lg); line-height: 1.1; margin: 0.6rem 0 0.35rem; }
+.job .co { font-weight: 500; font-size: var(--t-sm); }
+.job p.desc { color: var(--muted); margin-top: 1rem; max-width: 36ch; }
+.progress { height: 2px; background: var(--line); position: relative; }
+.progress i { position: absolute; inset: 0; background: var(--fg); transform: scaleX(0); transform-origin: left; }
 
-/* ───── Projects (kusovník jako scény) ───── */
-.projects { padding-block: clamp(6rem, 14vw, 11rem); }
-.scenes { list-style: none; margin: 0; padding: 0; }
-.scene {
+/* ───── Projects: nadpis vlevo, seznam vpravo ───── */
+.projects {
+  padding-block: 22vh 18vh;
   display: grid;
-  grid-template-columns: 6rem minmax(0, 1fr);
-  column-gap: 1rem;
-  padding: 2rem 0;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+  gap: 2.5rem;
+}
+.project-list { list-style: none; margin: 0; padding: 0; }
+.project-list li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.375rem 1.5rem;
+  padding: 1.375rem 0;
   border-top: 1px solid var(--line);
 }
-.scene > * { grid-column: 2; }
-.scene .pos { grid-column: 1; grid-row: 1 / span 2; color: var(--cobalt); font-variant-numeric: tabular-nums; }
-.scene .label, .scene dt { color: var(--ink-soft); font-size: var(--t-sm); }
-.scene .part {
-  font-family: var(--display);
-  font-stretch: 75%;
-  font-weight: 700;
-  font-size: var(--t-xl);
-  line-height: 0.95;
-  margin: 0.2rem 0 0.75rem;
-}
-.scene .desc { max-width: 42ch; }
-.scene .built { display: flex; gap: 1rem; margin: 1rem 0 0; padding-top: 0.75rem; border-top: 1px solid var(--line); max-width: 42ch; }
-.scene dd { margin: 0; }
-.scene .src {
+.project-list .name {
   justify-self: start;
-  margin-top: 1rem;
-  font-size: var(--t-sm);
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: clamp(1.5rem, 1rem + 1.4vw, 2.125rem);
+  line-height: 1.15;
   text-decoration: none;
-  background: linear-gradient(var(--cobalt), var(--cobalt)) 0 100% / 0 1px no-repeat;
+}
+.project-list a.name {
+  background: linear-gradient(var(--fg), var(--fg)) 0 100% / 0 1px no-repeat;
   transition: background-size 0.35s;
 }
-.scene .src:hover { background-size: 100% 1px; }
-.scene-count { display: none; }
+.project-list a.name:hover { background-size: 100% 1px; }
+.project-list .stack { color: var(--muted); font-size: var(--t-sm); align-self: center; text-align: right; }
+.project-list .desc { grid-column: 1 / -1; color: var(--muted); }
 
-/* 3D režim: zapíná ho JS třídou .depth-on (bez JS zůstává seznam výše) */
-.projects.depth-on {
-  display: grid;
-  grid-template-rows: auto 1fr;
-}
-.projects.depth-on .head { margin-bottom: 0; padding-top: 6rem; }
-.depth-on .scenes { position: relative; }
-.depth-on .scene {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 0;
-  border: 0;
-  will-change: transform, opacity, filter;
-}
-.depth-on .scene .part { font-size: clamp(3rem, 1rem + 8vw, 9rem); }
-.depth-on .scene .built { justify-content: center; }
-.depth-on .scene .src { justify-self: auto; }
-.depth-on .scene-count {
-  display: block;
-  transition: opacity 0.3s;
-  position: absolute;
-  right: max(var(--gutter), (100% - var(--max)) / 2);
-  bottom: 2.5rem;
-  color: var(--cobalt);
-  font-size: var(--t-sm);
-  font-variant-numeric: tabular-nums;
-}
-
-/* ───── Tools (data-assemble: sestavení z hloubky) ───── */
+/* ───── Tools (data-assemble) ───── */
 .tools { padding-block: clamp(6rem, 14vw, 11rem); }
-.tools-head h2 { font-family: var(--display); font-stretch: 75%; font-weight: 700; font-size: var(--t-xl); line-height: 1; letter-spacing: -0.01em; }
-.tools-head p { margin-top: 0.75rem; color: var(--ink-soft); font-size: var(--t-sm); }
+.tools-head p { margin-top: 0.75rem; color: var(--muted); font-size: var(--t-sm); }
 .tool-groups {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
   gap: 2.5rem 2rem;
   margin-top: 3rem;
 }
-.tool-group h3 { font-size: var(--t-sm); font-weight: 600; color: var(--cobalt); }
+.tool-group h3 { font-size: var(--t-sm); font-weight: 500; color: var(--muted); }
 .tool-group .rule { display: block; margin: 0.6rem 0 0.9rem; }
 .tool-group ul { list-style: none; margin: 0; padding: 0; }
-.tool-group li { font-family: var(--display); font-stretch: 75%; font-weight: 700; font-size: var(--t-md); line-height: 1.35; }
+.tool-group li { font-family: var(--display); font-weight: 600; font-size: var(--t-md); line-height: 1.4; }
 
-/* 3D režim: JS přidá .depth-on (desktop). Perspektiva na mřížce, mezivrstvy drží 3D kontext */
 .tools.depth-on { display: flex; flex-direction: column; justify-content: center; }
 .depth-on .tool-groups { perspective: 1000px; transform-style: preserve-3d; }
 .depth-on .tool-group, .depth-on .tool-group ul { transform-style: preserve-3d; }
 .depth-on .tool-group li { will-change: transform, opacity, filter; }
 
-/* ───── data-tunnel (efekt v knihovně, na tomto webu nepoužitý) ───── */
-.tunnel { list-style: none; margin: 2.5rem 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.75rem 2.25rem; }
-.tunnel li { font-size: var(--t-md); line-height: 1.3; }
-.tunnel .g { display: block; color: var(--ink-soft); font-size: var(--t-sm); }
-.tunnel-center h2 { font-family: var(--display); font-stretch: 75%; font-weight: 700; font-size: var(--t-xl); line-height: 1; }
-.tunnel-intro { margin-top: 0.75rem; color: var(--ink-soft); font-size: var(--t-sm); }
-.tunnel-group { display: none; }
-/* 3D režim: zapíná ho JS třídou .tunnel-on */
-.tunnel-on { perspective: 900px; }
-.tunnel-on .tunnel-center {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  display: grid;
-  place-content: center;
-  text-align: center;
-  padding-inline: var(--gutter);
-  pointer-events: none;
-  /* papírové halo: čitelnost přes položky, které jdou za nápisem */
-  text-shadow: 0 0 0.2rem var(--paper), 0 0 0.4rem var(--paper), 0 0 0.8rem var(--paper), 0 0 1.5rem var(--paper);
-}
-.tunnel-on .tunnel-center h2 { font-size: clamp(4rem, 2rem + 9vw, 11rem); line-height: 0.9; }
-.tunnel-on .tunnel-intro { margin: 1rem auto 0; max-width: 26ch; font-size: var(--t-base); }
-.tunnel-on .tunnel-group { display: block; margin-top: 0.75rem; color: var(--cobalt); font-variant-numeric: tabular-nums; }
-.tunnel-on .tunnel {
-  position: absolute;
-  inset: 0;
-  margin: 0;
-  display: block;
-  transform-style: preserve-3d;
-}
-.tunnel-on .tunnel li {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  white-space: nowrap;
-  font-family: var(--display);
-  font-stretch: 75%;
-  font-weight: 700;
-  font-size: clamp(1.4rem, 1rem + 1.2vw, 2.4rem);
-  visibility: hidden;
-  will-change: transform;
-}
-.tunnel-on .tunnel .g { display: none; }
-
 /* ───── Studies ───── */
 .studies { list-style: none; margin: 0; padding: 0; }
 .studies li { display: grid; grid-template-columns: 12rem 14rem 1fr; gap: 2rem; padding: 1.1rem 0; border-top: 1px solid var(--line); }
-.studies .when { color: var(--cobalt); font-variant-numeric: tabular-nums; }
-.studies .school { font-weight: 600; }
+.studies .when { color: var(--muted); font-variant-numeric: tabular-nums; }
+.studies .school { font-weight: 500; }
 
 /* ───── Contact ───── */
 .contact { padding-block: clamp(7rem, 16vw, 13rem) 2.5rem; }
-.contact .lead { color: var(--ink-soft); margin-bottom: 1.5rem; font-weight: 400; font-size: var(--t-md); }
+.contact .lead { color: var(--muted); margin-bottom: 1.5rem; font-weight: 400; font-size: var(--t-md); }
 .contact .mail {
   font-family: var(--display);
-  font-stretch: 75%;
-  font-weight: 700;
-  font-size: clamp(2rem, 0.5rem + 6.6vw, 7.5rem);
+  font-weight: 800;
+  font-size: min(4.5vw, 4.375rem); /* e-mail = 20 em v Syne 800, musí se vejít do 92vw i do --max */
   line-height: 1;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.02em;
   text-decoration: none;
-  word-break: break-word;
-  background: linear-gradient(var(--cobalt), var(--cobalt)) 0 100% / 0 3px no-repeat;
-  transition: background-size 0.5s;
+  white-space: nowrap;
 }
-.contact .mail:hover { background-size: 100% 3px; }
+.contact .mail wbr { display: none; } /* desktop: Chrome by na <wbr> zalomil i přes nowrap */
 .contact .links { display: flex; gap: 2rem; margin-top: 3rem; flex-wrap: wrap; }
-.contact footer { display: flex; justify-content: space-between; margin-top: 7rem; font-size: var(--t-sm); color: var(--ink-soft); }
+.contact .links a { color: var(--muted); text-decoration: none; transition: color 0.2s; }
+.contact .links a:hover { color: var(--fg); }
+.contact footer { display: flex; justify-content: space-between; margin-top: 7rem; font-size: var(--t-sm); color: var(--muted); }
 
-/* ───── Pinnutá sekce (JS přidá .depth-on: hero, Projects, Tools; i tunel) ─────
-   Přesně jedna obrazovka. Žádný padding-block ani min-height: délku scrollu dává
-   jen end / pinSpacing. Padding a normální výška platí jen pro fallback bez JS. */
+/* ───── Knihovna: strukturní CSS efektů, které tato stránka nepoužívá ───── */
+/* data-depth-scenes: JS přidá .depth-on, scény na středu přes sebe */
+.depth-on .scenes { position: relative; }
+.depth-on .scene {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; will-change: transform, opacity, filter;
+}
+/* data-tunnel: JS přidá .tunnel-on */
+.tunnel-group { display: none; }
+.tunnel-on { perspective: 900px; }
+.tunnel-on .tunnel-center { position: absolute; inset: 0; z-index: 2; display: grid; place-content: center; text-align: center; pointer-events: none; }
+.tunnel-on .tunnel-group { display: block; }
+.tunnel-on .tunnel { position: absolute; inset: 0; margin: 0; display: block; transform-style: preserve-3d; }
+.tunnel-on .tunnel li { position: absolute; left: 50%; top: 50%; white-space: nowrap; visibility: hidden; will-change: transform; }
+
+/* ───── Pinnutá sekce (JS přidá .depth-on) ─────
+   Přesně jedna obrazovka, bez padding-block a min-height: délku scrollu dává jen end / pinSpacing. */
 section.depth-on {
   height: 100svh;
   min-height: 0;
@@ -419,13 +314,12 @@ section.depth-on {
 }
 .hero.depth-on .hero-foot { margin-bottom: 3rem; }
 
-/* ───── Mobil ───── */
-@media (max-width: 899px) {
+/* ───── Mobil (<800 px) ───── */
+@media (max-width: 799px) {
   .nav ul { gap: 1rem; }
   .hero-foot { grid-template-columns: 1fr; }
   .hero-foot .meta { text-align: left; }
   .head { grid-template-columns: 1fr; gap: 0.5rem; }
-  .about p { margin: 0; }
   .career-inner { height: auto; display: block; padding-block: 6rem; }
   .career-side { display: block; padding-left: 0; }
   .career .head { display: grid; width: min(100% - 2 * var(--gutter), var(--max)); margin: 0 auto 3rem; }
@@ -435,12 +329,15 @@ section.depth-on {
   .h-track { flex-direction: column; padding: 0 var(--gutter); width: auto; margin: 0; }
   .job { width: auto; }
   .progress { display: none; }
-  .scene { grid-template-columns: 4.5rem minmax(0, 1fr); }
-  .depth-on .scene .part { font-size: clamp(2.5rem, 13vw, 4rem); }
+  .projects { grid-template-columns: 1fr; padding-block: 8rem 6rem; }
   .studies li { grid-template-columns: 1fr; gap: 0.25rem; }
-  .tunnel li { font-size: var(--t-base); }
   .tool-groups { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2rem 1.25rem; }
   .tool-group li { font-size: var(--t-base); }
+  /* e-mail: zalomit jen před „@“ (<wbr> v HTML) */
+  .contact .mail { font-size: clamp(1.5rem, 7.4vw, 3rem); white-space: normal; overflow-wrap: normal; line-height: 1.05; }
+  .contact .mail wbr { display: inline; }
+  .project-list li { grid-template-columns: 1fr; }
+  .project-list .stack { text-align: left; }
 }
 
 @media (prefers-reduced-motion: reduce) {

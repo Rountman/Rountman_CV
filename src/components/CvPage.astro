@@ -9,8 +9,6 @@ const other: Lang = lang === 'en' ? 'cs' : 'en';
 const { person, about, career, projects, skills, studies, ui } = content[lang];
 
 const [first, last] = person.name.split(' ');
-const years = career.map((j) => j.year);
-const span = `${Math.min(...years)}–${new Date().getFullYear()}`;
 ---
 <Base
   lang={lang}
@@ -33,9 +31,6 @@ const span = `${Math.min(...years)}–${new Date().getFullYear()}`;
       <div class="hero-name">
         <div>
           <h1 data-intro data-zoom-name>{first} <span class="l2">{last}</span></h1>
-          <div class="dim-ticks" data-zoom-fade>
-            <p class="dim" data-intro-fade><span>{ui.inProduction(span)}</span></p>
-          </div>
         </div>
       </div>
       <div class="hero-foot" data-zoom-fade>
@@ -49,7 +44,7 @@ const span = `${Math.min(...years)}–${new Date().getFullYear()}`;
     <!-- ABOUT: slova se rozsvěcují podle scrollu -->
     <section class="about block wrap" aria-labelledby="about-h">
       <h2 id="about-h" class="visually-hidden">{ui.about}</h2>
-      <p data-scrub-words>{about}</p>
+      <p data-scrub-words>{about.lead} <span class="rest">{about.rest}</span></p>
     </section>
 
     <!-- CAREER: hlavní scroll moment, horizontální pás + letopočet -->
@@ -80,30 +75,20 @@ const span = `${Math.min(...years)}–${new Date().getFullYear()}`;
       </div>
     </section>
 
-    <!-- PROJECTS: scény z hloubky (bez JS / reduced motion = seznam pod sebou) -->
-    <section id="projects" class="projects wrap-pad" data-depth-scenes aria-labelledby="proj-h">
-      <div class="head">
-        <h2 id="proj-h">{ui.nav.projects}</h2>
-        <p>{ui.projectsLead}</p>
-      </div>
-      <ol class="scenes" role="list">
-        {projects.map((p, i) => (
-          <li class="scene">
-            <span class="pos">{ui.pos} {String(i + 1).padStart(2, '0')}</span>
-            <span class="label">{ui.part}</span>
-            <h3 class="part">{p.name}</h3>
+    <!-- PROJECTS: nadpis vlevo, klidný seznam vpravo -->
+    <section id="projects" class="projects wrap-pad" aria-labelledby="proj-h">
+      <h2 id="proj-h">{ui.nav.projects}</h2>
+      <ol class="project-list" role="list">
+        {projects.map((p) => (
+          <li>
+            {p.url
+              ? <a class="name" href={p.url} target="_blank" rel="noopener">{p.name}</a>
+              : <span class="name">{p.name}</span>}
+            <span class="stack">{p.stack.join(', ')}</span>
             <p class="desc">{p.text}</p>
-            <dl class="built">
-              <dt>{ui.builtWith}</dt>
-              <dd>{p.stack.join(', ')}</dd>
-            </dl>
-            {p.url && (
-              <a class="src" href={p.url} target="_blank" rel="noopener">{ui.source}<span class="visually-hidden">: {p.name}</span></a>
-            )}
           </li>
         ))}
       </ol>
-      <span class="scene-count" data-scene-counter aria-hidden="true">01 / {String(projects.length).padStart(2, '0')}</span>
     </section>
 
     <!-- TOOLS: sestavení z hloubky (bez JS / reduced motion = statická mřížka skupin) -->
@@ -145,7 +130,7 @@ const span = `${Math.min(...years)}–${new Date().getFullYear()}`;
     <!-- CONTACT -->
     <section id="contact" class="contact wrap" aria-labelledby="contact-h">
       <h2 id="contact-h" class="lead">{ui.contactLead}</h2>
-      <a class="mail" href={`mailto:${person.email}`}>{person.email}</a>
+      <a class="mail" href={`mailto:${person.email}`}>{person.email.split('@')[0]}<wbr />@{person.email.split('@')[1]}</a>
       <div class="links">
         <a href={person.github} target="_blank" rel="noopener">GitHub</a>
         <a href={person.linkedin} target="_blank" rel="noopener">LinkedIn</a>

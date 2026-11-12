@@ -19,7 +19,7 @@ export function frameScrubbers() {
     const canvas = section.querySelector('canvas');
     if (!canvas) return;
     const ctx = canvas.getContext('2d')!;
-    const mobile = window.matchMedia('(max-width: 767px)').matches;
+    const mobile = window.matchMedia('(max-width: 799px)').matches;
     const pattern = (mobile && section.dataset.framesMobile) || section.dataset.frames!;
     const count = Number((mobile && section.dataset.countMobile) || section.dataset.count || 60);
     const length = Number(section.dataset.length || 300);

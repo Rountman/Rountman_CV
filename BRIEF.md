@@ -31,7 +31,7 @@
   - `MeshPhysicalMaterial`: color `#DFE3FF`, metalness 0.9, roughness 0.2, iridescence 1, iridescenceIOR 1.8, iridescenceThicknessRange [100, 1400] (spodní hodnota pomalu kolísá ±80), clearcoat 1, clearcoatRoughness 0.05, envMapIntensity 1.1, prostředí `RoomEnvironment`
   - světla: PointLight `#6F8CFF` (−4, 2, 4), PointLight `#FF8FD0` (4, −2, 3)
   - tvary = superelipsoidy z jedné `SphereGeometry` (desktop 140 segmentů, mobil 96): koule (1, 1, 1, n=2), čip (0.95, 0.95, 0.14, n=14), telefon (0.58, 1.15, 0.12, n=9), prohlížeč (1.45, 0.92, 0.1, n=9)
-  - morph tvaru přímo podle scrollu (bez zpoždění). Pozice, scale a opacity dojíždějí lerpem 0.08 za snímek
+  - morph tvaru přímo podle scrollu (bez zpoždění). Pozice, scale a opacity dojíždějí lerpem přes delta time: `k = 1 − 0.92^(dt·60)` (= 0.08 za snímek při 60 fps, stejné tempo na 120 Hz)
   - rotace: koule pomalu kolem Y (0.15 rad/s), ploché tvary jen kývání ±0.25 rad. Myš natáčí o max. 0.5 / 0.3 rad
 - **Nechci:** nic ze starého směru (rýsovací mřížka, kobalt, kusovník, Archivo), neonový akcent na textu, glassmorphism karty, all-caps labely, šipky za odkazy
 
@@ -46,7 +46,7 @@ Objekt: x a y jsou podíly poloviny šířky a výšky okna (0 = střed), s = sc
 | Projects | nadpis vlevo, seznam vpravo, objekt malý vlevo dole | bez pinu | x −0.68, y −0.38, s 0.45, o 0.8, koule |
 | Tools | skupiny dovedností jako čitelná mřížka (`data-assemble`, tmavé barvy) | pin +120 % | x 0.7, y 0.3, s 0.35, o 0.25, koule |
 | Studies | klidný seznam | bez pinu | stejně jako Tools |
-| Contact | e-mail na 1 řádek přes celou šířku (`min(5.2vw, 88px)`, nowrap; mobil zalomit jen před „@“), objekt ztlumený za textem | min. 100vh | x 0, y 0.05, s 1.5, o 0.22, koule |
+| Contact | e-mail na 1 řádek přes celou šířku (`min(4.5vw, 70px)` (e-mail má v Syne 800 šířku 20 em, víc se do obsahu nevejde), nowrap; mobil zalomit jen před „@“), objekt ztlumený za textem | min. 100vh | x 0, y 0.05, s 1.5, o 0.22, koule |
 
 - **Rozpočet:** pinnutý/sticky scroll ≈ 3,5 obrazovky, stránka ≈ 11–12 obrazovek
 - **Odpadá:** hero zoom, horizontální pás Work, scény Projects (efekty zůstávají v knihovně, na této stránce se nepoužijí)

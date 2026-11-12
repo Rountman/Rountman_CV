@@ -41,8 +41,9 @@ export function intro() {
     .from(split.chars, { yPercent: 115, duration: dur.reveal, stagger: 0.022 }, 0)
     .addLabel('chars')
     // rise: žádná opacity, jen posun; startuje spolu se jménem (text je vidět od prvního vykreslení)
-    .to(rises, { y: 0, duration: dur.reveal, stagger: 0.06, ease: ease.soft }, 0)
-    .to(fades, { autoAlpha: 1, y: 0, duration: 0.8, stagger: 0.08, ease: ease.soft }, 'chars-=0.6')
+    .to(rises, { y: 0, duration: dur.reveal, stagger: 0.06, ease: ease.soft }, 0);
+  if (fades.length) tl.to(fades, { autoAlpha: 1, y: 0, duration: 0.8, stagger: 0.08, ease: ease.soft }, 'chars-=0.6');
+  tl
     // po intru zpět na čistý text: maska řádků (overflow: clip) by ořízla jméno při hero zoomu
     .add(() => split.revert());
   return () => split.revert();

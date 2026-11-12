@@ -15,7 +15,7 @@ export function initMotion() {
   mm.add(
     {
       motion: '(prefers-reduced-motion: no-preference)',
-      desktop: '(min-width: 900px)',
+      desktop: '(min-width: 800px)',
     },
     (ctx) => {
       const { motion, desktop } = ctx.conditions as { motion: boolean; desktop: boolean };

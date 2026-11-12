@@ -40,7 +40,7 @@ Když nový efekt opravdu chybí, přidej ho do `effects.ts` jako funkci + data-
 - UI navázané na pinnutou animaci (počítadla, aktivní stav) aktualizuj v `onUpdate` tweenu/timeline, ne ScrollTriggeru
 - Všechno jde přes `initMotion()` → `gsap.matchMedia()`:
   - `prefers-reduced-motion: reduce` → žádné animace, obsah viditelný a čitelný
-  - mobil (<900 px) → bez Lenisu, bez pinování horizontálních pásů, bez parallaxu, bez `filter: blur` (jen scale + opacity), scale max. 1.8. Svislé piny (hero, scény, tunel) běží
+  - mobil (<800 px) → bez Lenisu, bez pinování horizontálních pásů, bez parallaxu, bez `filter: blur` (jen scale + opacity), scale max. 1.8. Svislé piny (hero, scény, tunel) běží
 - Důležitý text (jména, ceny, CTA) je vždy HTML, nikdy zapečený v obrázku nebo canvasu
 
 ## Design pravidla
