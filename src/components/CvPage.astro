@@ -1,22 +1,29 @@
 ---
 import Base from '../layouts/Base.astro';
-import { person, about, career, projects, skills, studies } from '../data/cv';
+import { content, pathFor, type Lang } from '../data/cv';
 import { withBase } from '../lib/url';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const other: Lang = lang === 'en' ? 'cs' : 'en';
+const { person, about, career, projects, skills, studies, ui } = content[lang];
 
 const [first, last] = person.name.split(' ');
 const years = career.map((j) => j.year);
 const span = `${Math.min(...years)}–${new Date().getFullYear()}`;
 ---
 <Base
+  lang={lang}
   title={`${person.name} – ${person.role}`}
   description={person.intro}
 >
-  <nav class="nav" aria-label="Main">
+  <nav class="nav" aria-label={ui.navLabel}>
     <a href="#top">{person.title} {person.name}</a>
     <ul>
-      <li><a href="#work">Work</a></li>
-      <li><a href="#projects">Projects</a></li>
-      <li><a href="#contact">Contact</a></li>
+      <li><a href="#work">{ui.nav.work}</a></li>
+      <li><a href="#projects">{ui.nav.projects}</a></li>
+      <li><a href="#contact">{ui.nav.contact}</a></li>
+      <li><a href={withBase(pathFor(other))} hreflang={other} lang={other} aria-label={ui.switchLabel}>{ui.switchTo}</a></li>
     </ul>
   </nav>
 
@@ -27,7 +34,7 @@ const span = `${Math.min(...years)}–${new Date().getFullYear()}`;
         <div>
           <h1 data-intro data-zoom-name>{first} <span class="l2">{last}</span></h1>
           <div class="dim-ticks" data-zoom-fade>
-            <p class="dim" data-intro-fade><span>{span}, in production</span></p>
+            <p class="dim" data-intro-fade><span>{ui.inProduction(span)}</span></p>
           </div>
         </div>
       </div>
@@ -41,7 +48,7 @@ const span = `${Math.min(...years)}–${new Date().getFullYear()}`;
 
     <!-- ABOUT: slova se rozsvěcují podle scrollu -->
     <section class="about block wrap" aria-labelledby="about-h">
-      <h2 id="about-h" class="visually-hidden">About</h2>
+      <h2 id="about-h" class="visually-hidden">{ui.about}</h2>
       <p data-scrub-words>{about}</p>
     </section>
 
@@ -49,8 +56,8 @@ const span = `${Math.min(...years)}–${new Date().getFullYear()}`;
     <section id="work" class="career" data-horizontal aria-labelledby="work-h">
       <div class="career-inner">
         <div class="wrap head">
-          <h2 id="work-h">Work</h2>
-          <p>Six roles, from machine control panels to client web apps.</p>
+          <h2 id="work-h">{ui.nav.work}</h2>
+          <p>{ui.workLead}</p>
         </div>
         <span class="year" data-year-counter aria-hidden="true">{career[0].year}</span>
         <ol class="h-track" role="list">
@@ -70,22 +77,22 @@ const span = `${Math.min(...years)}–${new Date().getFullYear()}`;
     <!-- PROJECTS: scény z hloubky (bez JS / reduced motion = seznam pod sebou) -->
     <section id="projects" class="projects wrap-pad" data-depth-scenes aria-labelledby="proj-h">
       <div class="head">
-        <h2 id="proj-h">Projects</h2>
-        <p>A bill of materials. Source code on GitHub.</p>
+        <h2 id="proj-h">{ui.nav.projects}</h2>
+        <p>{ui.projectsLead}</p>
       </div>
       <ol class="scenes" role="list">
         {projects.map((p, i) => (
           <li class="scene">
-            <span class="pos">Pos. {String(i + 1).padStart(2, '0')}</span>
-            <span class="label">Part</span>
+            <span class="pos">{ui.pos} {String(i + 1).padStart(2, '0')}</span>
+            <span class="label">{ui.part}</span>
             <h3 class="part">{p.name}</h3>
             <p class="desc">{p.text}</p>
             <dl class="built">
-              <dt>Built with</dt>
+              <dt>{ui.builtWith}</dt>
               <dd>{p.stack.join(', ')}</dd>
             </dl>
             {p.url && (
-              <a class="src" href={p.url} target="_blank" rel="noopener">Source on GitHub<span class="visually-hidden">: {p.name}</span></a>
+              <a class="src" href={p.url} target="_blank" rel="noopener">{ui.source}<span class="visually-hidden">: {p.name}</span></a>
             )}
           </li>
         ))}
@@ -93,25 +100,30 @@ const span = `${Math.min(...years)}–${new Date().getFullYear()}`;
       <span class="scene-count" data-scene-counter aria-hidden="true">01 / {String(projects.length).padStart(2, '0')}</span>
     </section>
 
-    <!-- TOOLS: 3D tunel (bez JS / reduced motion = seznam s flex-wrap) -->
-    <section class="tools wrap-pad" data-tunnel aria-labelledby="skills-h">
-      <div class="tunnel-center">
-        <h2 id="skills-h">Tools</h2>
-        <p class="tunnel-intro" data-tunnel-intro>What I have shipped with, grouped by where it runs.</p>
-        <p class="tunnel-group" data-tunnel-group aria-hidden="true">{skills[0].group}</p>
+    <!-- TOOLS: sestavení z hloubky (bez JS / reduced motion = statická mřížka skupin) -->
+    <section class="tools wrap-pad" data-assemble aria-labelledby="skills-h">
+      <div class="tools-head">
+        <h2 id="skills-h">{ui.tools}</h2>
+        <p>{ui.toolsLead}</p>
       </div>
-      <ul class="tunnel" role="list">
-        {skills.flatMap((g) => g.items.map((s) => (
-          <li data-z data-group={g.group}>{s}<span class="g">{g.group}</span></li>
-        )))}
-      </ul>
+      <div class="tool-groups">
+        {skills.map((g) => (
+          <div class="tool-group" data-assemble-group>
+            <h3>{g.group}</h3>
+            <span class="rule" data-assemble-rule aria-hidden="true"></span>
+            <ul role="list">
+              {g.items.map((s) => <li data-assemble-item>{s}</li>)}
+            </ul>
+          </div>
+        ))}
+      </div>
     </section>
 
     <!-- STUDIES -->
     <section class="block wrap" aria-labelledby="edu-h">
       <div class="head">
-        <h2 id="edu-h">Studies</h2>
-        <p>Still studying, part time.</p>
+        <h2 id="edu-h">{ui.studies}</h2>
+        <p>{ui.studiesLead}</p>
       </div>
       <ul class="studies">
         {studies.map((s) => (
@@ -126,16 +138,16 @@ const span = `${Math.min(...years)}–${new Date().getFullYear()}`;
 
     <!-- CONTACT -->
     <section id="contact" class="contact wrap" aria-labelledby="contact-h">
-      <h2 id="contact-h" class="lead">Open to collaborations and new work. Write to me:</h2>
+      <h2 id="contact-h" class="lead">{ui.contactLead}</h2>
       <a class="mail" href={`mailto:${person.email}`}>{person.email}</a>
       <div class="links">
         <a href={person.github} target="_blank" rel="noopener">GitHub</a>
         <a href={person.linkedin} target="_blank" rel="noopener">LinkedIn</a>
-        <a href={withBase(person.cv)} download>Download CV (PDF)</a>
+        <a href={withBase(person.cv)} download>{ui.downloadCv}</a>
       </div>
       <footer>
         <span>© {new Date().getFullYear()} {person.name}</span>
-        <a href="#top">Back to top</a>
+        <a href="#top">{ui.backToTop}</a>
       </footer>
     </section>
   </main>
