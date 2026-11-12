@@ -90,7 +90,7 @@ export const skills: { group: string; items: string[] }[] = [
   { group: 'Mobile', items: ['Android Studio', 'Jetpack Compose'] },
   { group: 'Games & XR', items: ['Unity', 'Unreal Engine', 'AR', 'VR', 'Blender'] },
   { group: 'Desktop & embedded', items: ['WPF', 'Embedded Wizard', 'Modbus/TCP'] },
-  { group: 'Tools', items: ['Git', 'Azure', 'Enterprise Architect'] },
+  { group: 'Workflow', items: ['Git', 'Azure', 'Enterprise Architect'] },
 ];
 
 export const studies = [
