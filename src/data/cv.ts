@@ -75,12 +75,19 @@ export const career: Job[] = [
   },
 ];
 
-export const projects = [
-  { name: 'MCDM', text: 'Educational platform for multi-criteria decision making.', stack: ['React', 'Python'], url: 'https://github.com/Rountman' },
-  { name: 'Blendscan', text: 'Android app for Blendlens.', stack: ['Kotlin', 'Jetpack Compose', 'Azure'], url: 'https://github.com/Rountman' },
-  { name: 'ARAdventure', text: 'AR mini-game built in Unity.', stack: ['Unity', 'C#'], url: 'https://github.com/Rountman' },
-  { name: 'Discord bot', text: 'Automation and server management.', stack: ['Node.js'], url: 'https://github.com/Rountman' },
-  { name: 'UHK HelicopterAR', text: 'Shader and AR experiments with a helicopter model.', stack: ['Unity'], url: 'https://github.com/Rountman' },
+export type Project = {
+  name: string;
+  text: string;
+  stack: string[];
+  url?: string; // jen veřejné repo; bez URL se odkaz nezobrazí
+};
+
+export const projects: Project[] = [
+  { name: 'MCDM', text: 'Educational platform for multi-criteria decision making.', stack: ['React', 'Python'], url: 'https://github.com/Rountman/mcdm-edu-platform' },
+  { name: 'Blendscan', text: 'Android app for Blendlens.', stack: ['Kotlin', 'Jetpack Compose', 'Azure'] },
+  { name: 'ARAdventure', text: 'AR mini-game built in Unity.', stack: ['Unity', 'C#'], url: 'https://github.com/Rountman/ARAdventure' },
+  { name: 'Discord bot', text: 'Automation and server management.', stack: ['Node.js'] },
+  { name: 'UHK HelicopterAR', text: 'Shader and AR experiments with a helicopter model.', stack: ['Unity'], url: 'https://github.com/Rountman/UHK-HelicopterAR' },
 ];
 
 export const skills: { group: string; items: string[] }[] = [

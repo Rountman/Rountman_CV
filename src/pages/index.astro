@@ -83,7 +83,9 @@ const span = `${Math.min(...years)}–${new Date().getFullYear()}`;
               <dt>Built with</dt>
               <dd>{p.stack.join(', ')}</dd>
             </dl>
-            <a class="src" href={p.url} target="_blank" rel="noopener">Source on GitHub<span class="visually-hidden">: {p.name}</span></a>
+            {p.url && (
+              <a class="src" href={p.url} target="_blank" rel="noopener">Source on GitHub<span class="visually-hidden">: {p.name}</span></a>
+            )}
           </li>
         ))}
       </ol>
