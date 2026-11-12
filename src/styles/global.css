@@ -88,6 +88,8 @@ h1, h2, h3, p { margin: 0; }
   display: grid;
   align-content: end;
   padding-block: 7rem 3rem;
+  padding-inline: max(var(--gutter), (100% - var(--max)) / 2); /* plná šířka kvůli ořezu, obsah jako .wrap */
+  overflow: clip; /* zvětšené jméno nesmí roztáhnout stránku do šířky */
 }
 .hero-name { /* jméno přesně na středu obrazovky */
   position: absolute;
@@ -106,6 +108,8 @@ h1, h2, h3, p { margin: 0; }
   letter-spacing: -0.01em;
   text-transform: uppercase;
   text-align: center;
+  white-space: nowrap;
+  will-change: transform;
 }
 .hero h1 .l2 { display: block; }
 /* maska řádků ze SplitText: víc místa nahoře, ať se neořízne čárka nad Í */
@@ -115,7 +119,6 @@ h1, h2, h3, p { margin: 0; }
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  margin-top: 2.25rem;
   color: var(--cobalt);
   font-size: var(--t-sm);
 }
@@ -126,10 +129,10 @@ h1, h2, h3, p { margin: 0; }
   background: currentColor;
 }
 .dim span { white-space: nowrap; font-variant-numeric: tabular-nums; }
-.dim-wrap { position: relative; }
-.dim-wrap::before, .dim-wrap::after { content: ''; position: absolute; bottom: -0.45rem; width: 1px; height: 0.9rem; background: var(--cobalt); }
-.dim-wrap::before { left: 0; }
-.dim-wrap::after { right: 0; }
+.dim-ticks { position: relative; margin-top: 2.25rem; }
+.dim-ticks::before, .dim-ticks::after { content: ''; position: absolute; top: -2.7rem; width: 1px; height: 0.9rem; background: var(--cobalt); }
+.dim-ticks::before { left: 0; }
+.dim-ticks::after { right: 0; }
 
 .hero-foot {
   display: grid;

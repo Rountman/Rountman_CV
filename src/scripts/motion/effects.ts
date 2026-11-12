@@ -6,7 +6,8 @@ import { gsap, SplitText, ScrollTrigger, ease, dur } from './core';
  *
  *  data-intro             nadpis, který při načtení vyjede po znacích (jen jeden na stránku)
  *  data-intro-fade        prvky, které se objeví po intru
- *  data-hero-out          prvek, který se při odscrollování hero rozostří a odjede
+ *  data-hero-zoom         hero sekce: pin, jméno [data-zoom-name] se zvětšuje a rozšiřuje (wdth 62 → 125),
+ *                         až jím divák „proletí“; [data-zoom-fade] zmizí v prvních 20 %
  *  data-scrub-words       odstavec, jehož slova se rozsvěcují podle scrollu
  *  data-horizontal        sekce s .h-track uvnitř → pin + horizontální posun
  *  data-year-counter      (uvnitř data-horizontal) velký letopočet podle aktivní karty
@@ -22,19 +23,28 @@ export function intro() {
   const tl = gsap.timeline({ defaults: { ease: ease.reveal } });
   tl.set(title, { autoAlpha: 1 })
     .from(split.chars, { yPercent: 115, duration: dur.reveal, stagger: 0.022 })
-    .to(fades, { autoAlpha: 1, y: 0, duration: 0.8, stagger: 0.08, ease: ease.soft }, '-=0.6');
+    .to(fades, { autoAlpha: 1, y: 0, duration: 0.8, stagger: 0.08, ease: ease.soft }, '-=0.6')
+    // po intru zpět na čistý text: maska řádků (overflow: clip) by ořízla jméno při hero zoomu
+    .add(() => split.revert());
   return () => split.revert();
 }
 
-export function heroOut() {
-  gsap.utils.toArray<HTMLElement>('[data-hero-out]').forEach((el) => {
-    gsap.to(el, {
-      yPercent: -18,
-      opacity: 0.15,
-      filter: 'blur(10px)',
-      ease: ease.scrub,
-      scrollTrigger: { trigger: el.closest('section') ?? el, start: 'top top', end: 'bottom top', scrub: true },
+/**
+ * Zoom k divákovi. Mobil: menší zvětšení a bez blur (výkon).
+ * fontStretch je jediná povolená animace mimo transform/opacity/filter (jen hero nadpis).
+ */
+export function heroZoom(desktop: boolean) {
+  gsap.utils.toArray<HTMLElement>('[data-hero-zoom]').forEach((section) => {
+    const name = section.querySelector<HTMLElement>('[data-zoom-name]');
+    const fades = section.querySelectorAll<HTMLElement>('[data-zoom-fade]');
+    if (!name) return;
+    const tl = gsap.timeline({
+      defaults: { ease: ease.scrub },
+      scrollTrigger: { trigger: section, start: 'top top', end: '+=80%', pin: true, scrub: true },
     });
+    tl.to(name, { scale: desktop ? 3.2 : 1.8, fontStretch: '125%', transformOrigin: '50% 50%', duration: 1 }, 0)
+      .to(name, desktop ? { opacity: 0, filter: 'blur(12px)', duration: 0.4 } : { opacity: 0, duration: 0.4 }, 0.6)
+      .to(fades, { opacity: 0, scale: 0.9, duration: 0.2 }, 0);
   });
 }
 
