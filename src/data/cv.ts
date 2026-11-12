@@ -10,6 +10,8 @@ export const person = {
   github: 'https://github.com/Rountman',
   linkedin: 'https://www.linkedin.com/in/antonin-pecka',
   location: 'Pardubice region, Czech Republic',
+  cv: 'Antonin_Pecka_CV.pdf', // v public/
+  avatar: 'RountmanAvatar.jpg', // v public/, zatím jen og:image
 };
 
 export const about =

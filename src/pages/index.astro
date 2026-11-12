@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import { person, about, career, projects, skills, studies } from '../data/cv';
+import { withBase } from '../lib/url';
 
 const [first, last] = person.name.split(' ');
 const years = career.map((j) => j.year);
@@ -130,6 +131,7 @@ const span = `${Math.min(...years)}–${new Date().getFullYear()}`;
       <div class="links">
         <a href={person.github} target="_blank" rel="noopener">GitHub</a>
         <a href={person.linkedin} target="_blank" rel="noopener">LinkedIn</a>
+        <a href={withBase(person.cv)} download>Download CV (PDF)</a>
       </div>
       <footer>
         <span>© {new Date().getFullYear()} {person.name}</span>
