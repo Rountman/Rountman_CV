@@ -12,7 +12,8 @@ import { gsap, SplitText, ScrollTrigger, ease, dur } from './core';
  *                         pin, každá přiletí z hloubky, chvíli drží a odletí k divákovi;
  *                         [data-scene-counter] ukazuje „03 / 05“
  *  data-tunnel           sekce s [data-z] položkami → JS přidá .tunnel-on, pin, 3D tunel: položky na zlatém
- *                         úhlu, kamera (proxy camZ) jimi proletí; [data-tunnel-group] = skupina nejbližší položky
+ *                         úhlu, kamera (proxy camZ) jimi proletí; [data-tunnel-group] = skupina nejbližší položky;
+ *                         [data-tunnel-intro] zmizí mezi 12 a 20 % pinu
  *  data-scrub-words       odstavec, jehož slova se rozsvěcují podle scrollu
  *  data-horizontal        sekce s .h-track uvnitř → pin + horizontální posun
  *  data-year-counter      (uvnitř data-horizontal) velký letopočet podle aktivní karty
@@ -146,7 +147,9 @@ export function tunnel(desktop: boolean) {
     });
 
     section.classList.add('tunnel-on');
-    const st = pinWithTail(section, 220, 0.6); // animace +320 %, z toho 100 % dojezd
+    const PIN = 220; // animace +320 %, z toho 100 % dojezd
+    const st = pinWithTail(section, PIN, 0.6);
+    const intro = section.querySelector<HTMLElement>('[data-tunnel-intro]');
     const cam = { z: 0 };
     let group = '';
     const render = () => {
@@ -171,18 +174,21 @@ export function tunnel(desktop: boolean) {
       }
     };
 
-    gsap.to(cam, {
+    const tl = gsap.timeline({ defaults: { ease: ease.scrub }, onUpdate: render, scrollTrigger: st });
+    tl.to(cam, {
       // kamera musí dojet tak daleko, aby i poslední položka (z = −(n−1) × krok) prošla za GONE;
       // nezávisí na délce scrollu (end), ta mění jen rychlost
       z: (items.length - 1) * STEP + GONE + 200,
-      ease: ease.scrub,
-      onUpdate: render,
-      scrollTrigger: st,
-    });
+      duration: 1,
+    }, 0);
+    // úvodní věta: viditelná prvních 12 % pinu, do 20 % pinu zmizí (časy v podílu celé animace)
+    const pinShare = PIN / (PIN + 100);
+    if (intro) tl.to(intro, { opacity: 0, duration: 0.08 * pinShare }, 0.12 * pinShare);
     render();
 
     cleanups.push(() => {
       section.classList.remove('tunnel-on', 'depth-on');
+      intro?.style.removeProperty('opacity');
       items.forEach((el) => { el.style.removeProperty('visibility'); el.style.removeProperty('opacity'); el.style.removeProperty('transform'); });
     });
   });
