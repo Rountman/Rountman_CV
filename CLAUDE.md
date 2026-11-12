@@ -25,6 +25,7 @@ Když nový efekt opravdu chybí, přidej ho do `effects.ts` jako funkci + data-
 | `data-tunnel` + `[data-z]` | JS přidá `.tunnel-on`; animace +320 % (pin +220 % + 100 % dojezd), 3D tunel (perspective 900px, zlatý úhel, z krok 350px / mobil 300px), kamera = proxy `camZ`; `[data-tunnel-group]` = skupina nejbližší položky (`data-group`) |
 | `data-assemble` + `[data-assemble-group]` | JS přidá `.depth-on`; pin +120 % (pinWithTail), posledních 25 % pinu držení se složenou mřížkou; položky `[data-assemble-item]` přiletí z `translate3d(±40vw, ±30vh, −2000…−4000px)` + blur 6px (seed podle indexu, perspective 1000px), skupiny po 0.08, uvnitř stagger 0.02; `[data-assemble-rule]` se narýsuje, když dosedne první položka skupiny. Mobil: bez pinu, skupina vyjede při `top 85%` |
 | `data-speed="0.8"` | parallax |
+| `data-core='{"x","y","s","o","shape"}'` | skleněné jádro (`src/scripts/core/`, ne GSAP): fixed `<canvas data-core-canvas>` za obsahem + `[data-core-fallback]` (CSS koule bez WebGL nebo s `?nogl`). Kotva na sekci: x, y = podíl poloviny okna (y + nahoru), s, o, shape `sphere/chip/phone/browser`. Mezi kotvami smoothstep(0.2, 0.8), tvar morphuje přímo se scrollem, pozice/scale/opacity lerp `1 − 0.92^(dt·60)`. Three.js je vlastní chunk načtený po `load` + idle. Mobil (<800, matchMedia listener): x 0, y +0.25, s × 0.7, o × 0.6, 96 segmentů. Kotvy se přeměří při resize, ScrollTrigger refresh a fonts.ready |
 | `data-frames="…/frame-{i}.webp"` + `<canvas>` | sekvence snímků řízená scrollem (viz `frameScrubber.ts`, snímky přes `npm run frames`) |
 
 ## Motion pravidla

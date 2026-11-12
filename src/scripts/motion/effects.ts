@@ -26,6 +26,8 @@ import { gsap, SplitText, ScrollTrigger, ease, dur } from './core';
  *  data-year-counter      (uvnitř data-horizontal) velký letopočet podle aktivní karty
  *  data-rule              linka, která se při scrollu "narýsuje" zleva doprava
  *  data-speed="0.8"       parallax (1 = normálně, <1 pomaleji, >1 rychleji)
+ *
+ *  (data-core = skleněné jádro je samostatný modul src/scripts/core/, viz jeho index.ts)
  */
 
 export function intro() {

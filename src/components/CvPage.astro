@@ -9,12 +9,27 @@ const other: Lang = lang === 'en' ? 'cs' : 'en';
 const { person, about, career, projects, skills, studies, ui } = content[lang];
 
 const [first, last] = person.name.split(' ');
+
+// Kotvy 3D objektu (storyboard v BRIEF.md): x, y = podíl poloviny okna, s = scale, o = opacity
+const core = (x: number, y: number, s: number, o: number, shape = 'sphere') => JSON.stringify({ x, y, s, o, shape });
+const anchor = {
+  hero: core(0, 0.12, 1.25, 1),
+  about: core(0.55, 0, 0.75, 0.9),
+  work: core(0.5, 0, 0.95, 1, 'chip'), // etapy čip → telefon → prohlížeč přijdou s přestavbou Work
+  projects: core(-0.68, -0.38, 0.45, 0.8),
+  tools: core(0.7, 0.3, 0.35, 0.25),
+  contact: core(0, 0.05, 1.5, 0.22),
+};
 ---
 <Base
   lang={lang}
   title={`${person.name} – ${person.role}`}
   description={person.intro}
 >
+  <!-- skleněné jádro: fixed canvas za obsahem (scripts/core) -->
+  <canvas class="core-canvas" data-core-canvas aria-hidden="true"></canvas>
+  <div class="core-fallback" data-core-fallback aria-hidden="true"></div>
+
   <nav class="nav" aria-label={ui.navLabel}>
     <a href="#top">{person.title} {person.name}</a>
     <ul>
@@ -27,7 +42,7 @@ const [first, last] = person.name.split(' ');
 
   <main id="top">
     <!-- HERO: jediný orchestrovaný moment při načtení -->
-    <section class="hero wrap-pad" data-hero-zoom>
+    <section class="hero wrap-pad" data-hero-zoom data-core={anchor.hero}>
       <div class="hero-name">
         <div>
           <h1 data-intro data-zoom-name>{first} <span class="l2">{last}</span></h1>
@@ -42,13 +57,13 @@ const [first, last] = person.name.split(' ');
     </section>
 
     <!-- ABOUT: slova se rozsvěcují podle scrollu -->
-    <section class="about block wrap" aria-labelledby="about-h">
+    <section class="about block wrap" data-core={anchor.about} aria-labelledby="about-h">
       <h2 id="about-h" class="visually-hidden">{ui.about}</h2>
       <p data-scrub-words>{about.lead} <span class="rest">{about.rest}</span></p>
     </section>
 
     <!-- CAREER: hlavní scroll moment, horizontální pás + letopočet -->
-    <section id="work" class="career" data-horizontal aria-labelledby="work-h">
+    <section id="work" class="career" data-horizontal data-core={anchor.work} aria-labelledby="work-h">
       <div class="career-inner">
         <div class="career-side">
           <div class="wrap head">
@@ -76,7 +91,7 @@ const [first, last] = person.name.split(' ');
     </section>
 
     <!-- PROJECTS: nadpis vlevo, klidný seznam vpravo -->
-    <section id="projects" class="projects wrap-pad" aria-labelledby="proj-h">
+    <section id="projects" class="projects wrap-pad" data-core={anchor.projects} aria-labelledby="proj-h">
       <h2 id="proj-h">{ui.nav.projects}</h2>
       <ol class="project-list" role="list">
         {projects.map((p) => (
@@ -92,7 +107,7 @@ const [first, last] = person.name.split(' ');
     </section>
 
     <!-- TOOLS: sestavení z hloubky (bez JS / reduced motion = statická mřížka skupin) -->
-    <section class="tools wrap-pad" data-assemble aria-labelledby="skills-h">
+    <section class="tools wrap-pad" data-assemble data-core={anchor.tools} aria-labelledby="skills-h">
       <div class="tools-head">
         <h2 id="skills-h">{ui.tools}</h2>
         <p>{ui.toolsLead}</p>
@@ -111,7 +126,7 @@ const [first, last] = person.name.split(' ');
     </section>
 
     <!-- STUDIES -->
-    <section class="block wrap" aria-labelledby="edu-h">
+    <section class="block wrap" data-core={anchor.tools} aria-labelledby="edu-h">
       <div class="head">
         <h2 id="edu-h">{ui.studies}</h2>
         <p>{ui.studiesLead}</p>
@@ -128,7 +143,7 @@ const [first, last] = person.name.split(' ');
     </section>
 
     <!-- CONTACT -->
-    <section id="contact" class="contact wrap" aria-labelledby="contact-h">
+    <section id="contact" class="contact wrap" data-core={anchor.contact} aria-labelledby="contact-h">
       <h2 id="contact-h" class="lead">{ui.contactLead}</h2>
       <a class="mail" href={`mailto:${person.email}`}>{person.email.split('@')[0]}<wbr />@{person.email.split('@')[1]}</a>
       <div class="links">
