@@ -15,7 +15,8 @@ import { gsap, SplitText, ScrollTrigger, ease, dur } from './core';
  *                         úhlu, kamera (proxy camZ) jimi proletí; [data-tunnel-group] = skupina nejbližší položky;
  *                         [data-tunnel-intro] zmizí mezi 12 a 20 % pinu
  *  data-scrub-words       odstavec, jehož slova se rozsvěcují podle scrollu
- *  data-horizontal        sekce s .h-track uvnitř → pin + horizontální posun
+ *  data-horizontal        sekce s .h-track uvnitř → pin + horizontální posun, dokud střed poslední
+ *                         karty nedojede na střed okna; pak držení (25 % délky)
  *  data-year-counter      (uvnitř data-horizontal) velký letopočet podle aktivní karty
  *  data-rule              linka, která se při scrollu "narýsuje" zleva doprava
  *  data-speed="0.8"       parallax (1 = normálně, <1 pomaleji, >1 rychleji)
@@ -221,14 +222,21 @@ export function horizontal() {
     const cards = gsap.utils.toArray<HTMLElement>('[data-year]', track);
     const counter = section.querySelector<HTMLElement>('[data-year-counter]');
     const bar = section.querySelector<HTMLElement>('[data-progress]');
-    const distance = () => track.scrollWidth - window.innerWidth;
+    const viewW = () => document.documentElement.clientWidth; // bez scrollbaru = vizuální střed
+    // posun tracku tak, aby střed POSLEDNÍ karty skončil na středu okna (layout, ne transformace)
+    const distance = () => {
+      const last = cards[cards.length - 1];
+      if (!last) return 0;
+      return Math.max(0, track.offsetLeft + last.offsetLeft + last.offsetWidth / 2 - viewW() / 2);
+    };
+    const MOVE = 0.75, HOLD = 0.25; // podíly celé délky; držení = poslední karta aktivní
 
     let current = '';
     const sync = (progress: number) => {
-      if (bar) bar.style.transform = `scaleX(${progress})`;
+      if (bar) bar.style.transform = `scaleX(${Math.min(1, progress / MOVE)})`;
       if (!counter || !cards.length) return;
       // aktivní karta = ta, jejíž střed je nejblíž středu obrazovky
-      const focus = window.innerWidth * 0.5;
+      const focus = viewW() * 0.5;
       let best = cards[0];
       let bestD = Infinity;
       for (const c of cards) {
@@ -245,21 +253,21 @@ export function horizontal() {
       }
     };
 
-    // onUpdate na tweenu (ne na ScrollTriggeru): běží i během scrub dojezdu,
+    // onUpdate na timeline (ne na ScrollTriggeru): běží i během scrub dojezdu,
     // takže letopočet sedí s tím, co je opravdu vidět
-    gsap.to(track, {
-      x: () => -distance(),
-      ease: ease.scrub,
-      onUpdate(this: gsap.core.Tween) { sync(this.progress()); },
+    const tl = gsap.timeline({
+      onUpdate(this: gsap.core.Timeline) { sync(this.progress()); },
       scrollTrigger: {
         trigger: section,
         start: 'top top',
-        end: () => '+=' + distance(),
+        end: () => '+=' + distance() / MOVE, // posun + držení
         pin: true,
         scrub: 0.8,
         invalidateOnRefresh: true,
       },
     });
+    tl.to(track, { x: () => -distance(), ease: ease.scrub, duration: MOVE })
+      .to({}, { duration: HOLD }); // prázdný krok: držení na poslední kartě
     sync(0);
   });
 }

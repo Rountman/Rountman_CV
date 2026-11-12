@@ -17,7 +17,7 @@ Když nový efekt opravdu chybí, přidej ho do `effects.ts` jako funkci + data-
 | `data-intro-fade` | objeví se po intru |
 | `data-hero-zoom` | pin +80 %, animace +180 % (dojezd při odjezdu): jméno `[data-zoom-name]` se zvětší (3.2, mobil 1.8) a rozšíří (wdth 62 → 125), divák jím „proletí“; `[data-zoom-fade]` zmizí v prvních 20 % |
 | `data-scrub-words` | slova odstavce se rozsvěcují podle scrollu |
-| `data-horizontal` + `.h-track` | pin + horizontální pás; `data-year-counter`, `data-progress`, karty s `data-year` |
+| `data-horizontal` + `.h-track` | pin + horizontální pás, dokud střed poslední karty nedojede na střed okna, pak držení 25 % délky; `data-year-counter`, `data-progress`, karty s `data-year` |
 | `data-rule` | linka se narýsuje při scrollu |
 | `data-depth-scenes` + `.scene` | JS přidá `.depth-on`, scény jsou na středu přes sebe; animace počet scén × 80 % (pin o 100 % kratší, zbytek dojíždí), každá přiletí z hloubky, drží, odletí k divákovi; `[data-scene-counter]` „03 / 05“ |
 | `data-tunnel` + `[data-z]` | JS přidá `.tunnel-on`; animace +320 % (pin +220 % + 100 % dojezd), 3D tunel (perspective 900px, zlatý úhel, z krok 350px / mobil 300px), kamera = proxy `camZ`; `[data-tunnel-group]` = skupina nejbližší položky (`data-group`) |
