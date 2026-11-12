@@ -21,7 +21,7 @@ import { gsap, SplitText, ScrollTrigger, ease, dur } from './core';
  *                         když dosedne první položka skupiny. Mobil: bez pinu, skupiny vyjedou při vjezdu
  *  data-scrub-words       odstavec, jehož slova se rozsvěcují podle scrollu
  *  data-horizontal        sekce s .h-track uvnitř → pin + horizontální posun, dokud střed poslední
- *                         karty nedojede na střed okna; pak držení (25 % délky)
+ *                         karty nedojede na střed okna; pak krátké držení (5 % délky)
  *  data-year-counter      (uvnitř data-horizontal) velký letopočet podle aktivní karty
  *  data-rule              linka, která se při scrollu "narýsuje" zleva doprava
  *  data-speed="0.8"       parallax (1 = normálně, <1 pomaleji, >1 rychleji)
@@ -315,7 +315,7 @@ export function horizontal() {
       if (!last) return 0;
       return Math.max(0, track.offsetLeft + last.offsetLeft + last.offsetWidth / 2 - viewW() / 2);
     };
-    const MOVE = 0.75, HOLD = 0.25; // podíly celé délky; držení = poslední karta aktivní
+    const MOVE = 0.95, HOLD = 0.05; // podíly celé délky; krátké držení, pak hned scroll dolů
 
     let current = '';
     const sync = (progress: number) => {
