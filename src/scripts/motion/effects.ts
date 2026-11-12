@@ -28,7 +28,9 @@ export function intro() {
   const fades = gsap.utils.toArray<HTMLElement>('[data-intro-fade]');
   const rises = gsap.utils.toArray<HTMLElement>('[data-intro-rise]');
   if (!title) return;
-  const split = SplitText.create(title, { type: 'lines,chars', mask: 'lines' });
+  // aria 'auto': nadpis dostane aria-label s celým textem a znaky aria-hidden → čtečka čte jméno jednou a celé
+  // (aria-label je na nadpisu povolený; po intru split.revert() vrátí čistý text bez atributů)
+  const split = SplitText.create(title, { type: 'lines,chars', mask: 'lines', aria: 'auto' });
   const tl = gsap.timeline({ defaults: { ease: ease.reveal } });
   tl.set(title, { autoAlpha: 1 })
     .from(split.chars, { yPercent: 115, duration: dur.reveal, stagger: 0.022 }, 0)
@@ -204,7 +206,8 @@ export function tunnel(desktop: boolean) {
 export function scrubWords() {
   const splits: SplitText[] = [];
   gsap.utils.toArray<HTMLElement>('[data-scrub-words]').forEach((el) => {
-    const split = SplitText.create(el, { type: 'words' });
+    // aria 'none': slova zůstanou čitelným textem (aria-label na <p> není povolený); span = platné uvnitř <p>
+    const split = SplitText.create(el, { type: 'words', aria: 'none', tag: 'span' });
     splits.push(split);
     gsap.fromTo(
       split.words,
