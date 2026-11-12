@@ -15,7 +15,10 @@
 ## 3. Art direction
 - **Koncept:** CV jako technický výkres / kusovník (BOM). Kariéra vede od řízení strojů k webu
 - **Paleta:** studený rýsovací papír `#e4e7ea`, indigo inkoust `#1a1f3a`, jediný akcent kobalt `#2b45e0`
-- **Písma:** Instrument Serif (display), Hanken Grotesk (text)
+- **Písmo:** jedna variabilní rodina Archivo (Google Fonts, wdth 62–125, wght 100–900), tokeny `--display` a `--text`
+  - Hero jméno: verzálky, wdth 62, wght 800, line-height 0.85, na středu obrazovky
+  - Nadpisy sekcí: wdth 75, wght 700
+  - Text: wdth 100, wght 400
 - **Textury / motivy:** jemná rýsovací mřížka, kótovací čára, projekty jako tabulka kusovníku
 - **Reference:** (sem vlož 3–5 screenshotů nebo snímků z videí a ke každému, co se ti na něm líbí)
 - **Nechci:** krémové pozadí s terakotou, karty se stíny, all-caps labely

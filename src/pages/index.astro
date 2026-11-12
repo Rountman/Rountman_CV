@@ -22,11 +22,13 @@ const span = `${Math.min(...years)}–${new Date().getFullYear()}`;
   <main id="top">
     <!-- HERO: jediný orchestrovaný moment při načtení -->
     <section class="hero wrap">
-      <div data-hero-out>
-        <div class="dim-wrap">
-          <h1 data-intro>{first}<span class="l2">{last}</span></h1>
+      <div class="hero-name" data-hero-out>
+        <div>
+          <div class="dim-wrap">
+            <h1 data-intro>{first} <span class="l2">{last}</span></h1>
+          </div>
+          <p class="dim" data-intro-fade><span>{span}, in production</span></p>
         </div>
-        <p class="dim" data-intro-fade><span>{span}, in production</span></p>
       </div>
       <div class="hero-foot">
         <p data-intro-fade>{person.intro}</p>
