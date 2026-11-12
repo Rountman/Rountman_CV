@@ -93,18 +93,23 @@ const span = `${Math.min(...years)}–${new Date().getFullYear()}`;
       <span class="scene-count" data-scene-counter aria-hidden="true">01 / {String(projects.length).padStart(2, '0')}</span>
     </section>
 
-    <!-- TOOLS: 3D tunel (bez JS / reduced motion = seznam s flex-wrap) -->
-    <section class="tools wrap-pad" data-tunnel aria-labelledby="skills-h">
-      <div class="tunnel-center">
+    <!-- TOOLS: sestavení z hloubky (bez JS / reduced motion = statická mřížka skupin) -->
+    <section class="tools wrap-pad" data-assemble aria-labelledby="skills-h">
+      <div class="tools-head">
         <h2 id="skills-h">Tools</h2>
-        <p class="tunnel-intro" data-tunnel-intro>What I have shipped with, grouped by where it runs.</p>
-        <p class="tunnel-group" data-tunnel-group aria-hidden="true">{skills[0].group}</p>
+        <p>What I have shipped with, grouped by where it runs.</p>
       </div>
-      <ul class="tunnel" role="list">
-        {skills.flatMap((g) => g.items.map((s) => (
-          <li data-z data-group={g.group}>{s}<span class="g">{g.group}</span></li>
-        )))}
-      </ul>
+      <div class="tool-groups">
+        {skills.map((g) => (
+          <div class="tool-group" data-assemble-group>
+            <h3>{g.group}</h3>
+            <span class="rule" data-assemble-rule aria-hidden="true"></span>
+            <ul role="list">
+              {g.items.map((s) => <li data-assemble-item>{s}</li>)}
+            </ul>
+          </div>
+        ))}
+      </div>
     </section>
 
     <!-- STUDIES -->

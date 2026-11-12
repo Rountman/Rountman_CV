@@ -23,6 +23,7 @@ Když nový efekt opravdu chybí, přidej ho do `effects.ts` jako funkci + data-
 | `data-rule` | linka se narýsuje při scrollu |
 | `data-depth-scenes` + `.scene` | JS přidá `.depth-on`, scény jsou na středu přes sebe; animace počet scén × 80 % (pin o 100 % kratší, zbytek dojíždí), každá přiletí z hloubky, drží, odletí k divákovi; `[data-scene-counter]` „03 / 05“ |
 | `data-tunnel` + `[data-z]` | JS přidá `.tunnel-on`; animace +320 % (pin +220 % + 100 % dojezd), 3D tunel (perspective 900px, zlatý úhel, z krok 350px / mobil 300px), kamera = proxy `camZ`; `[data-tunnel-group]` = skupina nejbližší položky (`data-group`) |
+| `data-assemble` + `[data-assemble-group]` | JS přidá `.depth-on`; pin +120 % (pinWithTail), posledních 25 % pinu držení se složenou mřížkou; položky `[data-assemble-item]` přiletí z `translate3d(±40vw, ±30vh, −2000…−4000px)` + blur 6px (seed podle indexu, perspective 1000px), skupiny po 0.08, uvnitř stagger 0.02; `[data-assemble-rule]` se narýsuje, když dosedne první položka skupiny. Mobil: bez pinu, skupina vyjede při `top 85%` |
 | `data-speed="0.8"` | parallax |
 | `data-frames="…/frame-{i}.webp"` + `<canvas>` | sekvence snímků řízená scrollem (viz `frameScrubber.ts`, snímky přes `npm run frames`) |
 

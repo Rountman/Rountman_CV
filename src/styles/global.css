@@ -297,17 +297,36 @@ section { position: relative; }
   font-variant-numeric: tabular-nums;
 }
 
-/* ───── Tools (3D tunel) ───── */
+/* ───── Tools (data-assemble: sestavení z hloubky) ───── */
 .tools { padding-block: clamp(6rem, 14vw, 11rem); }
-.tunnel-center h2 { font-family: var(--display); font-stretch: 75%; font-weight: 700; font-size: var(--t-xl); line-height: 1; }
-.tunnel-group { display: none; }
-.tunnel-intro { margin-top: 0.75rem; color: var(--ink-soft); font-size: var(--t-sm); }
+.tools-head h2 { font-family: var(--display); font-stretch: 75%; font-weight: 700; font-size: var(--t-xl); line-height: 1; letter-spacing: -0.01em; }
+.tools-head p { margin-top: 0.75rem; color: var(--ink-soft); font-size: var(--t-sm); }
+.tool-groups {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  gap: 2.5rem 2rem;
+  margin-top: 3rem;
+}
+.tool-group h3 { font-size: var(--t-sm); font-weight: 600; color: var(--cobalt); }
+.tool-group .rule { display: block; margin: 0.6rem 0 0.9rem; }
+.tool-group ul { list-style: none; margin: 0; padding: 0; }
+.tool-group li { font-family: var(--display); font-stretch: 75%; font-weight: 700; font-size: var(--t-md); line-height: 1.35; }
+
+/* 3D režim: JS přidá .depth-on (desktop). Perspektiva na mřížce, mezivrstvy drží 3D kontext */
+.tools.depth-on { display: flex; flex-direction: column; justify-content: center; }
+.depth-on .tool-groups { perspective: 1000px; transform-style: preserve-3d; }
+.depth-on .tool-group, .depth-on .tool-group ul { transform-style: preserve-3d; }
+.depth-on .tool-group li { will-change: transform, opacity, filter; }
+
+/* ───── data-tunnel (efekt v knihovně, na tomto webu nepoužitý) ───── */
 .tunnel { list-style: none; margin: 2.5rem 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.75rem 2.25rem; }
 .tunnel li { font-size: var(--t-md); line-height: 1.3; }
 .tunnel .g { display: block; color: var(--ink-soft); font-size: var(--t-sm); }
-
+.tunnel-center h2 { font-family: var(--display); font-stretch: 75%; font-weight: 700; font-size: var(--t-xl); line-height: 1; }
+.tunnel-intro { margin-top: 0.75rem; color: var(--ink-soft); font-size: var(--t-sm); }
+.tunnel-group { display: none; }
 /* 3D režim: zapíná ho JS třídou .tunnel-on */
-.tools.tunnel-on { perspective: 900px; }
+.tunnel-on { perspective: 900px; }
 .tunnel-on .tunnel-center {
   position: absolute;
   inset: 0;
@@ -369,10 +388,10 @@ section { position: relative; }
 .contact .links { display: flex; gap: 2rem; margin-top: 3rem; flex-wrap: wrap; }
 .contact footer { display: flex; justify-content: space-between; margin-top: 7rem; font-size: var(--t-sm); color: var(--ink-soft); }
 
-/* ───── Pinnutá sekce (JS přidá .depth-on: hero, Projects, Tools) ─────
+/* ───── Pinnutá sekce (JS přidá .depth-on: hero, Projects, Tools; i tunel) ─────
    Přesně jedna obrazovka. Žádný padding-block ani min-height: délku scrollu dává
    jen end / pinSpacing. Padding a normální výška platí jen pro fallback bez JS. */
-.hero.depth-on, .projects.depth-on, .tools.depth-on {
+section.depth-on {
   height: 100svh;
   min-height: 0;
   padding-block: 0;
@@ -396,6 +415,8 @@ section { position: relative; }
   .depth-on .scene .part { font-size: clamp(2.5rem, 13vw, 4rem); }
   .studies li { grid-template-columns: 1fr; gap: 0.25rem; }
   .tunnel li { font-size: var(--t-base); }
+  .tool-groups { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2rem 1.25rem; }
+  .tool-group li { font-size: var(--t-base); }
 }
 
 @media (prefers-reduced-motion: reduce) {

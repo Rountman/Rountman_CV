@@ -15,6 +15,10 @@ import { gsap, SplitText, ScrollTrigger, ease, dur } from './core';
  *  data-tunnel           sekce s [data-z] položkami → JS přidá .tunnel-on, pin, 3D tunel: položky na zlatém
  *                         úhlu, kamera (proxy camZ) jimi proletí; [data-tunnel-group] = skupina nejbližší položky;
  *                         [data-tunnel-intro] zmizí mezi 12 a 20 % pinu
+ *  data-assemble          sekce se skupinami [data-assemble-group] → položky [data-assemble-item] přiletí
+ *                         z hloubky (deterministický náhodný start) a složí se do mřížky; pin +120 %,
+ *                         posledních 25 % pinu drží složenou mřížku; [data-assemble-rule] se narýsuje,
+ *                         když dosedne první položka skupiny. Mobil: bez pinu, skupiny vyjedou při vjezdu
  *  data-scrub-words       odstavec, jehož slova se rozsvěcují podle scrollu
  *  data-horizontal        sekce s .h-track uvnitř → pin + horizontální posun, dokud střed poslední
  *                         karty nedojede na střed okna; pak držení (25 % délky)
@@ -198,6 +202,80 @@ export function tunnel(desktop: boolean) {
       section.classList.remove('tunnel-on', 'depth-on');
       intro?.style.removeProperty('opacity');
       items.forEach((el) => { el.style.removeProperty('visibility'); el.style.removeProperty('opacity'); el.style.removeProperty('transform'); });
+    });
+  });
+  return () => cleanups.forEach((c) => c());
+}
+
+/** Deterministické pseudonáhodné číslo 0–1 (mulberry32), seed = index položky. */
+function seeded(seed: number) {
+  let t = (seed + 0x6d2b79f5) | 0;
+  t = Math.imul(t ^ (t >>> 15), t | 1);
+  t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+  return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+}
+
+/**
+ * Sestavení z hloubky. Desktop: pin +120 % (pinWithTail), položky startují na
+ * translate3d(±40vw, ±30vh, −2000…−4000px), opacity 0, blur 6px a dosednou na své místo
+ * v mřížce. Pořadí po skupinách (posun 0.08), uvnitř skupiny stagger 0.02.
+ * Sestavení končí v 75 % pinu, zbytek je držení; během dojezdu sekce odjíždí se složenou mřížkou.
+ * Mobil: bez pinu a bez z, každá skupina vyjede při vjezdu do okna (ne scrub).
+ */
+export function assemble(desktop: boolean) {
+  const cleanups: (() => void)[] = [];
+  gsap.utils.toArray<HTMLElement>('[data-assemble]').forEach((section) => {
+    const groups = gsap.utils.toArray<HTMLElement>('[data-assemble-group]', section);
+    if (!groups.length) return;
+
+    if (!desktop) {
+      const tweens = groups.map((g) =>
+        gsap.from(g.querySelectorAll('[data-assemble-item]'), {
+          y: 24, opacity: 0, duration: dur.reveal, stagger: 0.03, ease: ease.reveal,
+          scrollTrigger: { trigger: g, start: 'top 85%', once: true },
+        }),
+      );
+      cleanups.push(() => tweens.forEach((t) => t.revert()));
+      return;
+    }
+
+    const PIN = 120, HOLD = 0.25; // pin +120 %, posledních 25 % pinu = držení
+    const ITEM = 0.5, GROUP_GAP = 0.08, STAGGER = 0.02, RULE = 0.15;
+    const st = pinWithTail(section, PIN, 0.6);
+    const tl = gsap.timeline({ scrollTrigger: { ...st, invalidateOnRefresh: true } });
+
+    let n = 0;
+    groups.forEach((g, gi) => {
+      const items = gsap.utils.toArray<HTMLElement>('[data-assemble-item]', g);
+      const rule = g.querySelector<HTMLElement>('[data-assemble-rule]');
+      const t0 = gi * GROUP_GAP;
+      items.forEach((el, j) => {
+        const i = n++;
+        const r = (k: number) => seeded(i * 4 + k) * 2 - 1; // −1…1
+        tl.fromTo(
+          el,
+          {
+            x: () => (r(0) * 40 * window.innerWidth) / 100,
+            y: () => (r(1) * 30 * window.innerHeight) / 100,
+            z: -3000 + r(2) * 1000,
+            opacity: 0,
+            filter: 'blur(6px)',
+          },
+          { x: 0, y: 0, z: 0, opacity: 1, filter: 'blur(0px)', duration: ITEM, ease: 'power3.out' },
+          t0 + j * STAGGER,
+        );
+      });
+      if (rule) tl.fromTo(rule, { scaleX: 0 }, { scaleX: 1, duration: RULE, ease: ease.soft }, t0 + ITEM);
+    });
+
+    // prázdný krok: sestavení = podíl (1 − HOLD) pinu z celé animace (pin + 100 % dojezd)
+    const built = tl.duration();
+    const share = ((1 - HOLD) * PIN) / (PIN + 100);
+    tl.to({}, { duration: built / share - built });
+
+    cleanups.push(() => {
+      tl.revert();
+      section.classList.remove('depth-on');
     });
   });
   return () => cleanups.forEach((c) => c());

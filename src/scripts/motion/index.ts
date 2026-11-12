@@ -1,6 +1,6 @@
 import { gsap, ScrollTrigger } from './core';
 import { initLenis } from './lenis';
-import { intro, heroZoom, depthScenes, tunnel, scrubWords, horizontal, rules, parallax } from './effects';
+import { intro, heroZoom, depthScenes, tunnel, assemble, scrubWords, horizontal, rules, parallax } from './effects';
 import { frameScrubbers } from './frameScrubber';
 
 /**
@@ -33,7 +33,7 @@ export function initMotion() {
       cleanups.push(heroZoom(desktop));
       if (desktop) horizontal();
       rules();
-      cleanups.push(depthScenes(desktop), tunnel(desktop));
+      cleanups.push(depthScenes(desktop), tunnel(desktop), assemble(desktop));
       if (desktop) parallax();
       ScrollTrigger.refresh();
 
