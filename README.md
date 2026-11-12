@@ -11,7 +11,6 @@ npm run build      # → dist/
 - Animace: `src/scripts/motion/` (efekty přes data-atributy, viz `CLAUDE.md`)
 - Zadání webu: `BRIEF.md`
 - Sekvence snímků z videa: `npm run frames -- video.mp4 nazev` (potřebuje ffmpeg)
-- Screenshoty pro kontrolu: `python3 scripts/shoot.py http://localhost:4321/` (Playwright)
 
 ## Nasazení na GitHub Pages
 1. Pushni do repa na větev `main`.

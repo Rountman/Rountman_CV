@@ -48,7 +48,9 @@ Když nový efekt opravdu chybí, přidej ho do `effects.ts` jako funkci + data-
 ## Postup práce
 1. Přečti `BRIEF.md`, napiš krátký plán sekcí a efektů, počkej na schválení
 2. Stav **jednu sekci po druhé**
-3. Po každé sekci: `npm run build` a screenshoty (Playwright MCP nebo `scripts/shoot.py`) na 0/20/40/60/80/100 % scrollu, po každém scrollu počkej ~1,8 s (scrub), desktop 1440×900 a mobil 390×844
+3. Po každé sekci: `npm run build`, `npm run preview` a ověření přes **Playwright MCP** (jiný nástroj na screenshoty v repu není):
+   desktop 1440×900 a mobil 390×844, scroll 0/20/40/60/80/100 %, po každém scrollu počkej ~1,8 s (scrub).
+   U pinnutých sekcí navíc snímek hned po konci pinu (nesmí být prázdná obrazovka) a konzole přes `browser_console_messages`
 4. Zkontroluj: konzole bez chyb, text čitelný, nic nepřetéká, reduced motion funguje
 5. Commit po každé hotové sekci
 
