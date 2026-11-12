@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Antonín Pecka – Concept D: Glass core</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;800&family=Geist:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0B0D12; --fg:#E8EAF0; --muted:#A9B0BF; --line:rgba(232,234,240,.14);
+    --display:'Syne',system-ui,sans-serif; --text:'Geist',system-ui,sans-serif;
+    --gutter:clamp(20px,4vw,56px);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--text);-webkit-font-smoothing:antialiased}
+  a{color:inherit}
+  a:focus-visible{outline:2px solid var(--fg);outline-offset:4px}
+  #gl{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+  #orb-fallback{display:none;position:fixed;left:50%;top:45%;width:min(60vw,460px);aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;
+    background:radial-gradient(circle at 34% 30%,rgba(255,255,255,.9) 0,rgba(255,255,255,.1) 10%,transparent 22%),conic-gradient(from 200deg,#7FD6E8,#9C8CFF,#F2A7D8,#FFE3A3,#7FD6E8);
+    box-shadow:inset -60px -80px 120px rgba(11,13,18,.85);opacity:.5;z-index:0}
+  .no-gl #orb-fallback{display:block}
+  main{position:relative;z-index:1}
+
+  nav{position:fixed;inset:0 0 auto;z-index:5;display:flex;justify-content:space-between;align-items:center;padding:22px var(--gutter);font-size:15px;
+    background:linear-gradient(var(--bg),rgba(11,13,18,0))}
+  nav .mark{font-family:var(--display);font-weight:800;font-size:18px;text-decoration:none}
+  nav ul{display:flex;gap:28px;list-style:none;margin:0;padding:0}
+  nav ul a{text-decoration:none;color:var(--muted);transition:color .2s}
+  nav ul a:hover{color:var(--fg)}
+  .progress{position:fixed;left:0;top:0;height:2px;width:100%;transform-origin:left;transform:scaleX(0);background:linear-gradient(90deg,#7FD6E8,#9C8CFF,#F2A7D8);z-index:6}
+
+  /* HERO */
+  .hero{min-height:100svh;display:flex;flex-direction:column;justify-content:flex-end;padding:0 var(--gutter) 72px;position:relative}
+  .rings{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);pointer-events:none}
+  .rings span{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);border-radius:50%;border:1px solid rgba(232,234,240,.08)}
+  .hero-row{display:flex;justify-content:space-between;align-items:flex-end;gap:40px;flex-wrap:wrap}
+  h1{margin:0;font-family:var(--display);font-weight:800;font-size:clamp(64px,11vw,168px);line-height:.9;letter-spacing:-.03em}
+  .intro{margin:0 0 14px;font-size:clamp(17px,1.5vw,21px);line-height:1.5;max-width:26ch;color:var(--muted)}
+  .hint{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:10px;font-size:13px;color:var(--muted);transition:opacity .5s}
+  .hint i{position:relative;display:block;width:1px;height:46px;background:rgba(232,234,240,.18);overflow:hidden}
+  .hint i::after{content:'';position:absolute;left:0;top:-40%;width:1px;height:40%;background:var(--fg);animation:drop 1.6s cubic-bezier(.65,0,.35,1) infinite}
+  @keyframes drop{to{top:100%}}
+  .scrolled .hint{opacity:0}
+
+  /* ABOUT */
+  .about{min-height:110vh;display:flex;align-items:center;padding:0 var(--gutter)}
+  .about p{margin:0;max-width:22ch;font-family:var(--display);font-weight:600;font-size:clamp(28px,3.4vw,52px);line-height:1.12;letter-spacing:-.015em}
+  .about p em{font-style:normal;color:var(--muted)}
+
+  /* WORK (sticky story) */
+  .work{position:relative;height:330vh}
+  .work .marker{position:absolute;left:0;width:1px;height:100vh;pointer-events:none}
+  .work-sticky{position:sticky;top:0;height:100vh;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);padding:0 var(--gutter);align-items:center}
+  .work h2{margin:0 0 28px;font-family:var(--display);font-weight:800;font-size:clamp(44px,5vw,72px);letter-spacing:-.02em}
+  .panels{position:relative;min-height:440px}
+  .panel{position:absolute;inset:0;opacity:0;transform:translateY(16px);transition:opacity .2s,transform .2s;pointer-events:none}
+  .panel.active{transition:opacity .45s .2s,transform .45s .2s;pointer-events:auto}
+  .panel.active{opacity:1;transform:none}
+  .panel .when{color:var(--muted);font-size:15px}
+  .panel{display:flex;flex-direction:column;gap:28px}
+  .panel h3{max-width:20ch;margin:6px 0 2px;font-family:var(--display);font-weight:800;font-size:clamp(22px,2.1vw,30px);line-height:1.1}
+  .panel .co{font-size:15px;font-weight:500;margin-bottom:8px}
+  .panel p{margin:0;color:var(--muted);font-size:16px;line-height:1.55;max-width:46ch}
+  .steps{display:flex;gap:10px;margin-top:36px;list-style:none;padding:0}
+  .steps li{width:44px;height:3px;border-radius:2px;background:var(--line);transition:background .4s}
+  .steps li.active{background:var(--fg)}
+
+  /* PROJECTS */
+  .projects{padding:22vh var(--gutter) 18vh;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);gap:40px}
+  .projects h2{margin:0;font-family:var(--display);font-weight:800;font-size:clamp(44px,5vw,72px);letter-spacing:-.02em}
+  .projects ol{list-style:none;margin:0;padding:0}
+  .projects li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 24px;padding:22px 0;border-top:1px solid var(--line)}
+  .projects li a{font-family:var(--display);font-weight:600;font-size:clamp(24px,2.4vw,34px);text-decoration:none;background:linear-gradient(var(--fg),var(--fg)) 0 100%/0 1px no-repeat;transition:background-size .35s}
+  .projects li a:hover{background-size:100% 1px}
+  .projects .stack{color:var(--muted);font-size:15px;align-self:center}
+  .projects .desc{grid-column:1/-1;color:var(--muted);font-size:16px;margin:0}
+
+  /* CONTACT */
+  .contact{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:0 var(--gutter);gap:28px}
+  .contact p{margin:0;color:var(--muted);font-size:18px}
+  .contact .mail{font-family:var(--display);font-weight:800;font-size:min(5.2vw,88px);letter-spacing:-.02em;text-decoration:none;white-space:nowrap}
+  @media (max-width:800px){.contact .mail{font-size:clamp(26px,9vw,48px);white-space:normal;overflow-wrap:normal;line-height:1.05}}
+  .contact .links{display:flex;gap:28px}
+  footer{position:relative;z-index:1;display:flex;justify-content:space-between;padding:24px var(--gutter);color:var(--muted);font-size:14px;border-top:1px solid var(--line)}
+  .note{position:fixed;right:16px;bottom:16px;z-index:6;font-size:12px;color:var(--muted);background:rgba(11,13,18,.7);border:1px solid var(--line);padding:6px 10px;border-radius:6px}
+
+  @media (max-width:800px){
+    nav ul{gap:16px}
+    .hero-row{flex-direction:column;align-items:flex-start;gap:16px}
+    .work-sticky{grid-template-columns:1fr;align-content:end;padding-bottom:12vh}
+    .projects{grid-template-columns:1fr}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .hint i::after{animation:none;top:0;height:100%}
+    .panel{transition:none}
+  }
+</style>
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"}}
+</script>
+</head>
+<body>
+<canvas id="gl" aria-hidden="true"></canvas>
+<div id="orb-fallback" aria-hidden="true"></div>
+<div class="progress" aria-hidden="true"></div>
+
+<nav aria-label="Main">
+  <a class="mark" href="#top">AP</a>
+  <ul><li><a href="#work">Work</a></li><li><a href="#projects">Projects</a></li><li><a href="#contact">Contact</a></li></ul>
+</nav>
+
+<main id="top">
+  <section class="hero" data-k='{"x":0,"y":0.12,"s":1.25,"shape":0,"o":1}'>
+    <div class="rings" aria-hidden="true"><span style="width:62vmin;height:62vmin"></span><span style="width:84vmin;height:84vmin"></span><span style="width:108vmin;height:108vmin"></span></div>
+    <div class="hero-row">
+      <h1>Antonín<br>Pecka</h1>
+      <p class="intro">Full-stack web developer. I build web applications in React and TypeScript and connect them to backends and external services.</p>
+    </div>
+    <div class="hint" aria-hidden="true"><i></i>Scroll</div>
+  </section>
+
+  <section class="about" data-k='{"x":0.55,"y":0,"s":0.75,"shape":0,"o":0.9}'>
+    <p>Five years of hands-on development. <em>I started with C#, .NET and WPF, moved to JavaScript with a Discord bot for MADMONQ that I still maintain today, and now I build full-stack web apps. I am into innovative development.</em></p>
+  </section>
+
+  <section class="work" id="work" aria-labelledby="work-h">
+    <div class="marker" style="top:0" data-stage="0" data-k='{"x":0.5,"y":0,"s":0.95,"shape":1,"o":1}'></div>
+    <div class="marker" style="top:115vh" data-stage="1" data-k='{"x":0.5,"y":0,"s":1,"shape":2,"o":1}'></div>
+    <div class="marker" style="top:230vh" data-stage="2" data-k='{"x":0.5,"y":0,"s":0.95,"shape":3,"o":1}'></div>
+    <div class="work-sticky">
+      <div>
+        <h2 id="work-h">Work</h2>
+        <div class="panels">
+          <article class="panel active">
+            <div class="role"><div class="when">Jan 2021 – Dec 2023</div><h3>Software Engineer</h3><div class="co">MIKROKLIMA s.r.o.</div><p>Embedded Wizard UIs, WPF modernization, Modbus/TCP tooling.</p></div>
+            <div class="role"><div class="when">Jan 2020 – Dec 2023</div><h3>AR Applications (Side Projects)</h3><div class="co">Personal</div><p>Unity + C#, Blender modeling; AR demos on GitHub.</p></div>
+          </article>
+          <article class="panel">
+            <div class="role"><div class="when">Oct 2025 – Mar 2026</div><h3>Android Developer</h3><div class="co">Blendlens</div><p>Developing the Blendscan app in Kotlin (Jetpack Compose) with an Azure backend.</p></div>
+            <div class="role"><div class="when">Feb 2025 – Oct 2025</div><h3>IT Intern, IT Operations &amp; Data Analyst</h3><div class="co">Philip Morris International</div><p>Data analysis and reporting in Power BI and SQL. Worked with SAP data – bills of materials (BOM) and exports to Excel. Supported and coordinated a company-wide IT systems upgrade in a production environment, including planning and deployment tracking.</p></div>
+          </article>
+          <article class="panel">
+            <div class="role"><div class="when">Mar 2026 – Present</div><h3>Full-Stack Web Developer</h3><div class="co">PekneWeby s.r.o.</div><p>Building web applications in React and TypeScript and connecting them to backends and external services. Working directly with clients, estimating and splitting work in a small team.</p></div>
+            <div class="role"><div class="when">Jan 2022 – Present</div><h3>Freelance Developer (self-employed)</h3><div class="co">Freelance</div><p>MADMONQ: Node.js services for Discord community automation and Shopify theme customization. Webko Business s.r.o.: React frontend of the Chalupuj accommodation portal. University of Hradec Králové: MCDM educational platform (React, Python).</p></div>
+          </article>
+        </div>
+        <ol class="steps" aria-hidden="true"><li class="active"></li><li></li><li></li></ol>
+      </div>
+      <div></div>
+    </div>
+  </section>
+
+  <section class="projects" id="projects" aria-labelledby="proj-h" data-k='{"x":-0.68,"y":-0.38,"s":0.45,"shape":0,"o":0.8}'>
+    <h2 id="proj-h">Projects</h2>
+    <ol>
+      <li><a href="https://chalupuj.cz">Chalupuj</a><span class="stack">React</span><p class="desc">React frontend of the Chalupuj accommodation portal.</p></li>
+      <li><a href="https://github.com/Rountman">MCDM</a><span class="stack">React, Python</span><p class="desc">Educational platform.</p></li>
+      <li><a href="https://github.com/Rountman">Blendscan</a><span class="stack">Kotlin, Android Studio, Jetpack Compose, Azure</span><p class="desc">Android app.</p></li>
+      <li><a href="https://github.com/Rountman">ARAdventure</a><span class="stack">Unity, C#</span><p class="desc">Unity AR mini-game / demo.</p></li>
+      <li><a href="https://github.com/Rountman">UHK-HelicopterAR</a><span class="stack">Unity</span><p class="desc">AR helicopter shader/AR experiments.</p></li>
+    </ol>
+  </section>
+
+  <section class="contact" id="contact" aria-labelledby="contact-h" data-k='{"x":0,"y":0.05,"s":1.5,"shape":0,"o":0.22}'>
+    <p id="contact-h">Open to collaborations. Write to me:</p>
+    <a class="mail" href="mailto:entonypecka@gmail.com">entonypecka<wbr>@gmail.com</a>
+    <div class="links"><a href="https://github.com/Rountman">GitHub</a><a href="https://www.linkedin.com/in/antonin-pecka">LinkedIn</a></div>
+  </section>
+</main>
+<footer><span>© 2026 Antonín Pecka</span><a href="#top">Back to top</a></footer>
+<div class="note">Concept D: prototype</div>
+
+<script type="module">
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const mq = matchMedia('(max-width: 800px)');
+let mobile = mq.matches;
+mq.addEventListener('change', e => { mobile = e.matches; });
+
+// UI: progress, hint, stages
+const bar = document.querySelector('.progress');
+const panels = [...document.querySelectorAll('.panel')];
+const steps = [...document.querySelectorAll('.steps li')];
+let stage = 0;
+function ui() {
+  const max = document.documentElement.scrollHeight - innerHeight;
+  bar.style.transform = `scaleX(${max > 0 ? scrollY / max : 0})`;
+  document.body.classList.toggle('scrolled', scrollY > 40);
+}
+addEventListener('scroll', ui, { passive: true }); ui();
+
+// Anchors (sekce s data-k)
+const anchors = [...document.querySelectorAll('[data-k]')].map(el => ({ el, k: JSON.parse(el.dataset.k) }));
+let at = [];
+function measure() {
+  at = anchors.map(a => {
+    const r = a.el.getBoundingClientRect();
+    const h = a.el.classList.contains('marker') ? innerHeight : r.height;
+    return Math.max(0, r.top + scrollY + Math.min(h, innerHeight) / 2 - innerHeight / 2);
+  });
+}
+const smooth = (e0, e1, x) => { const t = Math.min(1, Math.max(0, (x - e0) / (e1 - e0))); return t * t * (3 - 2 * t); };
+function target() {
+  const s = scrollY;
+  let i = 0;
+  while (i < at.length - 1 && s >= at[i + 1]) i++;
+  const a = anchors[i].k, b = anchors[Math.min(i + 1, anchors.length - 1)].k;
+  const span = (at[i + 1] ?? at[i] + 1) - at[i];
+  const t = i >= anchors.length - 1 ? 0 : smooth(0.2, 0.8, (s - at[i]) / span);
+  // aktivní etapa Práce
+  const near = t < 0.5 ? anchors[i] : anchors[Math.min(i + 1, anchors.length - 1)];
+  const st = near.el.dataset.stage;
+  if (st !== undefined && +st !== stage) {
+    stage = +st;
+    panels.forEach((p, j) => p.classList.toggle('active', j === stage));
+    steps.forEach((p, j) => p.classList.toggle('active', j === stage));
+  }
+  return { a, b, t };
+}
+
+// WebGL
+let THREE;
+try {
+  THREE = await import('three');
+  const { RoomEnvironment } = await import('three/addons/environments/RoomEnvironment.js');
+  const canvas = document.getElementById('gl');
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  const scene = new THREE.Scene();
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+  const camera = new THREE.PerspectiveCamera(35, 1, 0.1, 100);
+  camera.position.set(0, 0, 8);
+
+  const seg = 140;
+  const geo = new THREE.SphereGeometry(1, seg, seg);
+  const base = geo.attributes.position.array.slice();
+  const shape = (a, b, c, n) => {
+    const out = new Float32Array(base.length);
+    for (let i = 0; i < base.length; i += 3) {
+      const x = base[i], y = base[i + 1], z = base[i + 2];
+      const f = Math.pow(Math.pow(Math.abs(x / a), n) + Math.pow(Math.abs(y / b), n) + Math.pow(Math.abs(z / c), n), 1 / n) || 1;
+      out[i] = x / f; out[i + 1] = y / f; out[i + 2] = z / f;
+    }
+    return out;
+  };
+  const shapes = [
+    shape(1, 1, 1, 2),          // koule
+    shape(0.95, 0.95, 0.14, 14), // čip
+    shape(0.58, 1.15, 0.12, 9), // telefon
+    shape(1.45, 0.92, 0.1, 9),  // okno prohlížeče
+  ];
+
+  const mat = new THREE.MeshPhysicalMaterial({
+    color: 0xdfe3ff, metalness: 0.9, roughness: 0.2,
+    iridescence: 1, iridescenceIOR: 1.8, iridescenceThicknessRange: [100, 1400],
+    clearcoat: 1, clearcoatRoughness: 0.05, envMapIntensity: 1.1, transparent: true,
+  });
+  const mesh = new THREE.Mesh(geo, mat);
+  scene.add(mesh);
+  const l1 = new THREE.PointLight(0x6f8cff, 80, 20); l1.position.set(-4, 2, 4); scene.add(l1);
+  const l2 = new THREE.PointLight(0xff8fd0, 70, 20); l2.position.set(4, -2, 3); scene.add(l2);
+
+  const pos = geo.attributes.position;
+  let lastKey = '';
+  function setShape(sa, sb, t) {
+    const key = sa + ':' + sb + ':' + t.toFixed(3);
+    if (key === lastKey) return;
+    lastKey = key;
+    const A = shapes[sa], B = shapes[sb], P = pos.array;
+    for (let i = 0; i < P.length; i++) P[i] = A[i] + (B[i] - A[i]) * t;
+    pos.needsUpdate = true;
+    geo.computeVertexNormals();
+  }
+
+  let halfW = 1, halfH = 1;
+  function resize() {
+    renderer.setSize(innerWidth, innerHeight, false);
+    camera.aspect = innerWidth / innerHeight;
+    camera.updateProjectionMatrix();
+    halfH = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * camera.position.z;
+    halfW = halfH * camera.aspect;
+    measure();
+  }
+  addEventListener('resize', resize); resize();
+
+  const cur = { x: 0, y: 0, s: 1, o: 1, morph: 0 };
+  let mx = 0, my = 0;
+  addEventListener('pointermove', e => { mx = e.clientX / innerWidth - 0.5; my = e.clientY / innerHeight - 0.5; });
+  const clock = new THREE.Clock();
+
+  function frame() {
+    const time = clock.getElapsedTime();
+    const { a, b, t } = target();
+    const lerp = (p, q, k) => p + (q - p) * k;
+    const k = reduce ? 1 : 0.08;
+    const tx = lerp(a.x, b.x, t) * (mobile ? 0 : 1), ty = lerp(a.y, b.y, t) + (mobile ? 0.25 : 0);
+    cur.x = lerp(cur.x, tx, k); cur.y = lerp(cur.y, ty, k);
+    cur.s = lerp(cur.s, lerp(a.s, b.s, t) * (mobile ? 0.7 : 1), k);
+    cur.o = lerp(cur.o, lerp(a.o, b.o, t) * (mobile ? 0.6 : 1), k);
+    // tvar přímo podle scrollu (bez zpoždění, jinak by na hranici sekcí problikl)
+    setShape(a.shape, b.shape, a.shape === b.shape ? 0 : t);
+
+    mesh.position.set(cur.x * halfW, cur.y * halfH, 0);
+    mesh.scale.setScalar(cur.s);
+    mat.opacity = cur.o;
+    const flat = (a.shape > 0 || b.shape > 0);
+    mesh.rotation.y = reduce ? -0.35 : (flat ? -0.45 + Math.sin(time * 0.4) * 0.25 : time * 0.15) + mx * 0.5;
+    mesh.rotation.x = reduce ? 0.1 : 0.12 + Math.sin(time * 0.3) * 0.08 + my * 0.3;
+    mat.iridescenceThicknessRange = [100 + Math.sin(time * 0.25) * 80, 1400];
+    renderer.render(scene, camera);
+    requestAnimationFrame(frame);
+  }
+  measure();
+  requestAnimationFrame(frame);
+  // přeměřit po načtení písem (mění výšky sekcí)
+  document.fonts?.ready.then(measure);
+} catch (err) {
+  document.documentElement.classList.add('no-gl');
+  measure();
+  addEventListener('scroll', target, { passive: true });
+  target();
+  console.warn('WebGL unavailable, showing static orb', err);
+}
+</script>
+</body>
+</html>
