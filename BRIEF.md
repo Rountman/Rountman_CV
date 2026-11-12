@@ -19,17 +19,17 @@
   - Hero jméno: verzálky, wdth 62, wght 800, line-height 0.85, na středu obrazovky
   - Nadpisy sekcí: wdth 75, wght 700
   - Text: wdth 100, wght 400
-- **Textury / motivy:** jemná rýsovací mřížka, kótovací čára, projekty jako tabulka kusovníku
+- **Textury / motivy:** jemná rýsovací mřížka, kótovací čára, projekty jako položky kusovníku (Pos. 03 / Part / Built with), každá jako scéna z hloubky
 - **Reference:** (sem vlož 3–5 screenshotů nebo snímků z videí a ke každému, co se ti na něm líbí)
 - **Nechci:** krémové pozadí s terakotou, karty se stíny, all-caps labely
 
 ## 4. Storyboard (scroll)
 | Sekce | Co se děje | Rozsah scrollu | Efekt |
 |---|---|---|---|
-| Hero | jméno vyjede po znacích; při odscrollování se rozostří | 0–100 vh | `data-intro`, `data-hero-out` |
+| Hero | jméno vyjede po znacích; při scrollu se zvětšuje a rozšiřuje, divák jím „proletí“ | pin +80 % | `data-intro`, `data-hero-zoom` |
 | About | slova odstavce se rozsvěcují | při průjezdu | `data-scrub-words` |
 | Work | **hlavní moment**: horizontální pás kariéry, velký letopočet 2020 → 2026 | pin, délka = šířka pásu | `data-horizontal` |
-| Projects | kusovník, linka se narýsuje | při průjezdu | `data-rule` |
+| Projects | položky kusovníku jako scény: přiletí z hloubky, drží, odletí k divákovi; počítadlo „03 / 05“ | pin 5 × 80 % (+400 %) | `data-depth-scenes` |
 | Tools, Studies | klidné | – | – |
 | Contact | velký e-mail | – | hover podtržení |
 

@@ -1,6 +1,6 @@
 import { gsap, ScrollTrigger } from './core';
 import { initLenis } from './lenis';
-import { intro, heroZoom, scrubWords, horizontal, rules, parallax } from './effects';
+import { intro, heroZoom, depthScenes, scrubWords, horizontal, rules, parallax } from './effects';
 import { frameScrubbers } from './frameScrubber';
 
 /**
@@ -27,13 +27,14 @@ export async function initMotion() {
 
       const cleanups: (void | (() => void))[] = [];
       if (desktop) cleanups.push(initLenis());
-      cleanups.push(intro(), scrubWords(), frameScrubbers());
+      // piny vytvářej v pořadí, v jakém jsou na stránce (jinak nesedí start/end následujících)
+      cleanups.push(intro(), frameScrubbers());
       heroZoom(desktop);
+      cleanups.push(scrubWords());
+      if (desktop) horizontal();
       rules();
-      if (desktop) {
-        horizontal();
-        parallax();
-      }
+      cleanups.push(depthScenes(desktop));
+      if (desktop) parallax();
       ScrollTrigger.refresh();
       return () => cleanups.forEach((c) => c && c());
     },

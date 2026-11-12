@@ -56,6 +56,8 @@ a { color: inherit; }
 a:focus-visible, button:focus-visible { outline: 2px solid var(--cobalt); outline-offset: 4px; border-radius: 2px; }
 h1, h2, h3, p { margin: 0; }
 .wrap { width: min(100% - 2 * var(--gutter), var(--max)); margin-inline: auto; }
+/* jako .wrap, ale sekce je na plnou šířku: zvětšený obsah se ořízne až na okraji obrazovky */
+.wrap-pad { padding-inline: max(var(--gutter), (100% - var(--max)) / 2); }
 .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
 /* stav před animací (jen když běží motion) */
@@ -88,7 +90,6 @@ h1, h2, h3, p { margin: 0; }
   display: grid;
   align-content: end;
   padding-block: 7rem 3rem;
-  padding-inline: max(var(--gutter), (100% - var(--max)) / 2); /* plná šířka kvůli ořezu, obsah jako .wrap */
   overflow: clip; /* zvětšené jméno nesmí roztáhnout stránku do šířky */
 }
 .hero-name { /* jméno přesně na středu obrazovky */
@@ -225,15 +226,75 @@ section { position: relative; }
 .progress { height: 2px; background: var(--paper-deep); position: relative; z-index: 1; }
 .progress i { position: absolute; inset: 0; background: var(--cobalt); transform: scaleX(0); transform-origin: left; }
 
-/* ───── Projects (kusovník) ───── */
-.bom { width: 100%; border-collapse: collapse; }
-.bom th { text-align: left; font-weight: 500; font-size: var(--t-sm); color: var(--ink-soft); padding: 0 1rem 0.75rem 0; }
-.bom td { padding: 1.5rem 1rem 1.5rem 0; vertical-align: baseline; border-top: 1px solid var(--line); }
-.bom .pos { width: 4rem; color: var(--cobalt); font-variant-numeric: tabular-nums; }
-.bom .name { font-family: var(--display); font-stretch: 75%; font-weight: 700; font-size: var(--t-lg); line-height: 1; width: 30%; }
-.bom .name a { text-decoration: none; background: linear-gradient(var(--cobalt), var(--cobalt)) 0 100% / 0 1px no-repeat; transition: background-size 0.35s; }
-.bom .name a:hover { background-size: 100% 1px; }
-.bom .stack { color: var(--ink-soft); font-size: var(--t-sm); width: 24%; }
+/* ───── Projects (kusovník jako scény) ───── */
+.projects { padding-block: clamp(6rem, 14vw, 11rem); }
+.scenes { list-style: none; margin: 0; padding: 0; }
+.scene {
+  display: grid;
+  grid-template-columns: 6rem minmax(0, 1fr);
+  column-gap: 1rem;
+  padding: 2rem 0;
+  border-top: 1px solid var(--line);
+}
+.scene > * { grid-column: 2; }
+.scene .pos { grid-column: 1; grid-row: 1 / span 2; color: var(--cobalt); font-variant-numeric: tabular-nums; }
+.scene .label, .scene dt { color: var(--ink-soft); font-size: var(--t-sm); }
+.scene .part {
+  font-family: var(--display);
+  font-stretch: 75%;
+  font-weight: 700;
+  font-size: var(--t-xl);
+  line-height: 0.95;
+  margin: 0.2rem 0 0.75rem;
+}
+.scene .desc { max-width: 42ch; }
+.scene .built { display: flex; gap: 1rem; margin: 1rem 0 0; padding-top: 0.75rem; border-top: 1px solid var(--line); max-width: 42ch; }
+.scene dd { margin: 0; }
+.scene .src {
+  justify-self: start;
+  margin-top: 1rem;
+  font-size: var(--t-sm);
+  text-decoration: none;
+  background: linear-gradient(var(--cobalt), var(--cobalt)) 0 100% / 0 1px no-repeat;
+  transition: background-size 0.35s;
+}
+.scene .src:hover { background-size: 100% 1px; }
+.scene-count { display: none; }
+
+/* 3D režim: zapíná ho JS třídou .depth-on (bez JS zůstává seznam výše) */
+.projects.depth-on {
+  height: 100svh;
+  padding-block: 6rem 2.5rem;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  overflow: clip;
+}
+.depth-on .head { margin-bottom: 0; }
+.depth-on .scenes { position: relative; }
+.depth-on .scene {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0;
+  border: 0;
+  will-change: transform, opacity, filter;
+}
+.depth-on .scene .part { font-size: clamp(3rem, 1rem + 8vw, 9rem); }
+.depth-on .scene .built { justify-content: center; }
+.depth-on .scene .src { justify-self: auto; }
+.depth-on .scene-count {
+  display: block;
+  position: absolute;
+  right: max(var(--gutter), (100% - var(--max)) / 2);
+  bottom: 2.5rem;
+  color: var(--cobalt);
+  font-size: var(--t-sm);
+  font-variant-numeric: tabular-nums;
+}
 
 /* ───── Skills ───── */
 .skills { display: grid; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); gap: 2.5rem 2rem; }
@@ -278,10 +339,8 @@ section { position: relative; }
   .h-track { flex-direction: column; padding: 0 var(--gutter); width: auto; margin: 0; }
   .job { width: auto; }
   .progress { display: none; }
-  .bom thead { display: none; }
-  .bom tr { display: grid; grid-template-columns: 3rem 1fr; border-top: 1px solid var(--line); padding: 1.25rem 0; }
-  .bom td { border: 0; padding: 0.15rem 0; width: auto !important; }
-  .bom td:not(.pos) { grid-column: 2; }
+  .scene { grid-template-columns: 4.5rem minmax(0, 1fr); }
+  .depth-on .scene .part { font-size: clamp(2.5rem, 13vw, 4rem); }
   .studies li { grid-template-columns: 1fr; gap: 0.25rem; }
   .skills { grid-template-columns: 1fr 1fr; gap: 2rem 1.25rem; }
   .skills li { font-size: var(--t-base); }

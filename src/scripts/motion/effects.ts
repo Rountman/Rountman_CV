@@ -8,6 +8,9 @@ import { gsap, SplitText, ScrollTrigger, ease, dur } from './core';
  *  data-intro-fade        prvky, které se objeví po intru
  *  data-hero-zoom         hero sekce: pin, jméno [data-zoom-name] se zvětšuje a rozšiřuje (wdth 62 → 125),
  *                         až jím divák „proletí“; [data-zoom-fade] zmizí v prvních 20 %
+ *  data-depth-scenes     sekce s .scene uvnitř → JS přidá .depth-on, scény jsou na středu přes sebe;
+ *                         pin, každá přiletí z hloubky, chvíli drží a odletí k divákovi;
+ *                         [data-scene-counter] ukazuje „03 / 05“
  *  data-scrub-words       odstavec, jehož slova se rozsvěcují podle scrollu
  *  data-horizontal        sekce s .h-track uvnitř → pin + horizontální posun
  *  data-year-counter      (uvnitř data-horizontal) velký letopočet podle aktivní karty
@@ -46,6 +49,60 @@ export function heroZoom(desktop: boolean) {
       .to(name, desktop ? { opacity: 0, filter: 'blur(12px)', duration: 0.4 } : { opacity: 0, duration: 0.4 }, 0.6)
       .to(fades, { opacity: 0, scale: 0.9, duration: 0.2 }, 0);
   });
+}
+
+/**
+ * Scény z hloubky. Jedna timeline: příchod (1) → držení (0.4) → odchod (1),
+ * další scéna přichází během posledních 30 % odchodu předchozí.
+ * Mobil: bez blur, odlet jen na scale 1.8.
+ */
+export function depthScenes(desktop: boolean) {
+  const cleanups: (() => void)[] = [];
+  gsap.utils.toArray<HTMLElement>('[data-depth-scenes]').forEach((section) => {
+    const scenes = gsap.utils.toArray<HTMLElement>('.scene', section);
+    if (!scenes.length) return;
+    const counter = section.querySelector<HTMLElement>('[data-scene-counter]');
+    const blur = (px: number) => (desktop ? { filter: `blur(${px}px)` } : {});
+    const pad = (n: number) => String(n).padStart(2, '0');
+    const IN = 1, HOLD = 0.4, OUT = 1, OVERLAP = 0.3;
+    const step = IN + HOLD + OUT * (1 - OVERLAP);
+
+    section.classList.add('depth-on');
+    gsap.set(scenes, { autoAlpha: 0, scale: 0.3, ...blur(16) });
+
+    let current = -1;
+    const tl = gsap.timeline({
+      defaults: { ease: ease.scrub },
+      // aktivní scéna = nejvíc viditelná; onUpdate timeline sedí i při scrub dojezdu
+      onUpdate() {
+        let best = 0, bestO = -1;
+        scenes.forEach((s, i) => {
+          const o = Number(gsap.getProperty(s, 'opacity'));
+          if (o > bestO) { bestO = o; best = i; }
+        });
+        // nic vidět (před první / po poslední scéně) → počítadlo nech, jak je
+        if (bestO > 0.01 && best !== current && counter) {
+          current = best;
+          counter.textContent = `${pad(best + 1)} / ${pad(scenes.length)}`;
+        }
+      },
+      scrollTrigger: {
+        trigger: section,
+        start: 'top top',
+        end: () => `+=${scenes.length * 80}%`,
+        pin: true,
+        scrub: 0.6,
+        invalidateOnRefresh: true,
+      },
+    });
+    scenes.forEach((s, i) => {
+      const t = i * step;
+      tl.to(s, { autoAlpha: 1, scale: 1, ...blur(0), duration: IN }, t)
+        .to(s, { autoAlpha: 0, scale: desktop ? 2.4 : 1.8, ...blur(8), duration: OUT }, t + IN + HOLD);
+    });
+    cleanups.push(() => section.classList.remove('depth-on'));
+  });
+  return () => cleanups.forEach((c) => c());
 }
 
 export function scrubWords() {

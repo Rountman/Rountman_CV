@@ -21,7 +21,7 @@ const span = `${Math.min(...years)}–${new Date().getFullYear()}`;
 
   <main id="top">
     <!-- HERO: jediný orchestrovaný moment při načtení -->
-    <section class="hero" data-hero-zoom>
+    <section class="hero wrap-pad" data-hero-zoom>
       <div class="hero-name">
         <div>
           <h1 data-intro data-zoom-name>{first} <span class="l2">{last}</span></h1>
@@ -66,28 +66,28 @@ const span = `${Math.min(...years)}–${new Date().getFullYear()}`;
       </div>
     </section>
 
-    <!-- PROJECTS: kusovník -->
-    <section id="projects" class="block wrap" aria-labelledby="proj-h">
+    <!-- PROJECTS: scény z hloubky (bez JS / reduced motion = seznam pod sebou) -->
+    <section id="projects" class="projects wrap-pad" data-depth-scenes aria-labelledby="proj-h">
       <div class="head">
         <h2 id="proj-h">Projects</h2>
         <p>A bill of materials. Source code on GitHub.</p>
       </div>
-      <div class="rule" data-rule></div>
-      <table class="bom">
-        <thead>
-          <tr><th>Pos.</th><th>Part</th><th>Description</th><th>Built with</th></tr>
-        </thead>
-        <tbody>
-          {projects.map((p, i) => (
-            <tr>
-              <td class="pos">{String(i + 1).padStart(2, '0')}</td>
-              <td class="name"><a href={p.url} target="_blank" rel="noopener">{p.name}</a></td>
-              <td>{p.text}</td>
-              <td class="stack">{p.stack.join(', ')}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <ol class="scenes" role="list">
+        {projects.map((p, i) => (
+          <li class="scene">
+            <span class="pos">Pos. {String(i + 1).padStart(2, '0')}</span>
+            <span class="label">Part</span>
+            <h3 class="part">{p.name}</h3>
+            <p class="desc">{p.text}</p>
+            <dl class="built">
+              <dt>Built with</dt>
+              <dd>{p.stack.join(', ')}</dd>
+            </dl>
+            <a class="src" href={p.url} target="_blank" rel="noopener">Source on GitHub<span class="visually-hidden">: {p.name}</span></a>
+          </li>
+        ))}
+      </ol>
+      <span class="scene-count" data-scene-counter aria-hidden="true">01 / {String(projects.length).padStart(2, '0')}</span>
     </section>
 
     <!-- SKILLS -->
