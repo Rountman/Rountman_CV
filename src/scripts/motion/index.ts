@@ -7,8 +7,9 @@ import { frameScrubbers } from './frameScrubber';
  * Jediný vstupní bod. Rozhoduje o reduced motion a mobilu,
  * efekty samy o sobě nic nevědí.
  */
-export async function initMotion() {
-  await document.fonts.ready; // SplitText musí měřit až s finálním fontem
+export function initMotion() {
+  // na finální font čekají jen efekty, které dělí text (SplitText měří znaky / slova)
+  const fontsReady = document.fonts.ready;
 
   const mm = gsap.matchMedia();
   mm.add(
@@ -28,15 +29,29 @@ export async function initMotion() {
       const cleanups: (void | (() => void))[] = [];
       if (desktop) cleanups.push(initLenis());
       // piny vytvářej v pořadí, v jakém jsou na stránce (jinak nesedí start/end následujících)
-      cleanups.push(intro(), frameScrubbers());
+      cleanups.push(frameScrubbers());
       cleanups.push(heroZoom(desktop));
-      cleanups.push(scrubWords());
       if (desktop) horizontal();
       rules();
       cleanups.push(depthScenes(desktop), tunnel(desktop));
       if (desktop) parallax();
       ScrollTrigger.refresh();
-      return () => cleanups.forEach((c) => c && c());
+
+      // SplitText efekty až s finálním fontem. ctx.add(): i po await je zaregistruje do matchMedia
+      // kontextu, takže se při změně breakpointu / reduced motion správně uklidí
+      let alive = true;
+      fontsReady.then(() => {
+        if (!alive) return;
+        ctx.add(() => {
+          cleanups.push(intro(), scrubWords());
+          ScrollTrigger.refresh();
+        });
+      });
+
+      return () => {
+        alive = false;
+        cleanups.forEach((c) => c && c());
+      };
     },
   );
 }

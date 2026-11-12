@@ -5,7 +5,8 @@ import { gsap, SplitText, ScrollTrigger, ease, dur } from './core';
  * takže AI (i člověk) skládá stránku bez psaní nového JS.
  *
  *  data-intro             nadpis, který při načtení vyjede po znacích (jen jeden na stránku)
- *  data-intro-fade        prvky, které se objeví po intru
+ *  data-intro-fade        prvky, které se objeví po intru (opacity 0 → 1)
+ *  data-intro-rise        prvky, které jsou vidět hned (kvůli LCP) a intro je jen posune o 14 px nahoru
  *  data-hero-zoom         hero sekce: pin, jméno [data-zoom-name] se zvětšuje a rozšiřuje (wdth 62 → 125),
  *                         až jím divák „proletí“; [data-zoom-fade] zmizí v prvních 20 %
  *  data-depth-scenes     sekce s .scene uvnitř → JS přidá .depth-on, scény jsou na středu přes sebe;
@@ -25,12 +26,16 @@ import { gsap, SplitText, ScrollTrigger, ease, dur } from './core';
 export function intro() {
   const title = document.querySelector<HTMLElement>('[data-intro]');
   const fades = gsap.utils.toArray<HTMLElement>('[data-intro-fade]');
+  const rises = gsap.utils.toArray<HTMLElement>('[data-intro-rise]');
   if (!title) return;
   const split = SplitText.create(title, { type: 'lines,chars', mask: 'lines' });
   const tl = gsap.timeline({ defaults: { ease: ease.reveal } });
   tl.set(title, { autoAlpha: 1 })
-    .from(split.chars, { yPercent: 115, duration: dur.reveal, stagger: 0.022 })
-    .to(fades, { autoAlpha: 1, y: 0, duration: 0.8, stagger: 0.08, ease: ease.soft }, '-=0.6')
+    .from(split.chars, { yPercent: 115, duration: dur.reveal, stagger: 0.022 }, 0)
+    .addLabel('chars')
+    // rise: žádná opacity, jen posun; startuje spolu se jménem (text je vidět od prvního vykreslení)
+    .to(rises, { y: 0, duration: dur.reveal, stagger: 0.06, ease: ease.soft }, 0)
+    .to(fades, { autoAlpha: 1, y: 0, duration: 0.8, stagger: 0.08, ease: ease.soft }, 'chars-=0.6')
     // po intru zpět na čistý text: maska řádků (overflow: clip) by ořízla jméno při hero zoomu
     .add(() => split.revert());
   return () => split.revert();

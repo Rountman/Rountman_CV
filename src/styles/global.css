@@ -63,6 +63,7 @@ h1, h2, h3, p { margin: 0; }
 /* stav před animací (jen když běží motion) */
 .motion [data-intro] { visibility: hidden; }
 .motion [data-intro-fade] { opacity: 0; transform: translateY(14px); }
+.motion [data-intro-rise] { transform: translateY(14px); } /* vidět hned (LCP), jen posun */
 
 /* ───── Nav ───── */
 .nav {

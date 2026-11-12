@@ -15,6 +15,7 @@ Když nový efekt opravdu chybí, přidej ho do `effects.ts` jako funkci + data-
 |---|---|
 | `data-intro` | nadpis vyjede po znacích při načtení (max. 1 na stránku) |
 | `data-intro-fade` | objeví se po intru |
+| `data-intro-rise` | vidět hned (LCP), intro ho jen posune o 14 px nahoru; pro hlavní text hera |
 | `data-hero-zoom` | pin +80 %, animace +180 % (dojezd při odjezdu): jméno `[data-zoom-name]` se zvětší (3.2, mobil 1.8) a rozšíří (wdth 62 → 125), divák jím „proletí“; `[data-zoom-fade]` zmizí v prvních 20 % |
 | `data-scrub-words` | slova odstavce se rozsvěcují podle scrollu |
 | `data-horizontal` + `.h-track` | pin + horizontální pás, dokud střed poslední karty nedojede na střed okna, pak držení 25 % délky; `data-year-counter`, `data-progress`, karty s `data-year` |
