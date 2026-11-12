@@ -156,10 +156,12 @@ export function tunnel(desktop: boolean) {
     };
 
     gsap.to(cam, {
-      z: items.length * STEP + 1200, // poslední položka skončí na rel. z = krok + 1200 > 700, tj. za kamerou
+      // kamera musí dojet tak daleko, aby i poslední položka (z = −(n−1) × krok) prošla za GONE;
+      // nezávisí na délce scrollu (end), ta mění jen rychlost
+      z: (items.length - 1) * STEP + GONE + 200,
       ease: ease.scrub,
       onUpdate: render,
-      scrollTrigger: { trigger: section, start: 'top top', end: '+=400%', pin: true, scrub: 0.6 },
+      scrollTrigger: { trigger: section, start: 'top top', end: '+=320%', pin: true, scrub: 0.6 },
     });
     render();
 

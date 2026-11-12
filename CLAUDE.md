@@ -20,7 +20,7 @@ Když nový efekt opravdu chybí, přidej ho do `effects.ts` jako funkci + data-
 | `data-horizontal` + `.h-track` | pin + horizontální pás; `data-year-counter`, `data-progress`, karty s `data-year` |
 | `data-rule` | linka se narýsuje při scrollu |
 | `data-depth-scenes` + `.scene` | JS přidá `.depth-on`, scény jsou na středu přes sebe; pin (počet scén × 80 %), každá přiletí z hloubky, drží, odletí k divákovi; `[data-scene-counter]` „03 / 05“ |
-| `data-tunnel` + `[data-z]` | JS přidá `.tunnel-on`; pin +400 %, 3D tunel (perspective 900px, zlatý úhel, z krok 350px / mobil 300px), kamera = proxy `camZ`; `[data-tunnel-group]` = skupina nejbližší položky (`data-group`) |
+| `data-tunnel` + `[data-z]` | JS přidá `.tunnel-on`; pin +320 %, 3D tunel (perspective 900px, zlatý úhel, z krok 350px / mobil 300px), kamera = proxy `camZ`; `[data-tunnel-group]` = skupina nejbližší položky (`data-group`) |
 | `data-speed="0.8"` | parallax |
 | `data-frames="…/frame-{i}.webp"` + `<canvas>` | sekvence snímků řízená scrollem (viz `frameScrubber.ts`, snímky přes `npm run frames`) |
 
