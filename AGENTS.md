@@ -6,6 +6,7 @@
 - Astro (statický build → GitHub Pages), TypeScript, čisté CSS s tokeny v `src/styles/global.css`
 - GSAP 3.13+ (ScrollTrigger, SplitText, zdarma i komerčně), Lenis (smooth scroll, jen desktop)
 - Obsah jen v `src/data/*.ts`, nikdy natvrdo v komponentách
+- Písmo Archivo je self-hostované (`@fontsource-variable/archivo`, `@font-face` + preload v `Base.astro` přes import `?url`). Žádné externí fonty
 
 ## Knihovna efektů (`src/scripts/motion/`)
 Efekty se zapínají data-atributy. **Nové efekty nevymýšlej, dokud to jde složit z existujících.**
