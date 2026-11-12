@@ -55,22 +55,28 @@ const span = `${Math.min(...years)}–${new Date().getFullYear()}`;
     <!-- CAREER: hlavní scroll moment, horizontální pás + letopočet -->
     <section id="work" class="career" data-horizontal aria-labelledby="work-h">
       <div class="career-inner">
-        <div class="wrap head">
-          <h2 id="work-h">{ui.nav.work}</h2>
-          <p>{ui.workLead}</p>
+        <div class="career-side">
+          <div class="wrap head">
+            <h2 id="work-h">{ui.nav.work}</h2>
+            <p>{ui.workLead}</p>
+          </div>
+          <div class="career-meter" aria-hidden="true">
+            <span class="year" data-year-counter>{career[0].year}</span>
+            <div class="progress"><i data-progress></i></div>
+          </div>
         </div>
-        <span class="year" data-year-counter aria-hidden="true">{career[0].year}</span>
-        <ol class="h-track" role="list">
-          {career.map((job) => (
-            <li class="job" data-year={job.year}>
-              <span class="when">{job.from} – {job.to}</span>
-              <h3>{job.role}</h3>
-              <span class="co">{job.company}</span>
-              <p class="desc">{job.text}</p>
-            </li>
-          ))}
-        </ol>
-        <div class="progress wrap" aria-hidden="true"><i data-progress></i></div>
+        <div class="career-window">
+          <ol class="h-track" role="list">
+            {career.map((job) => (
+              <li class="job" data-year={job.year}>
+                <span class="when">{job.from} – {job.to}</span>
+                <h3>{job.role}</h3>
+                <span class="co">{job.company}</span>
+                <p class="desc">{job.text}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
       </div>
     </section>
 

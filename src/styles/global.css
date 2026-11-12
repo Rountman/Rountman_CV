@@ -173,44 +173,64 @@ section { position: relative; }
 }
 
 /* ───── Career (horizontal) ───── */
+/* desktop: levý pevný sloupec (nadpis, popis, letopočet, progress) + pravé okno, kterým jede pás */
 .career { overflow: hidden; }
 .career-inner {
+  --side-w: max(22rem, 30vw);
+  --focus: 4vw; /* místo aktivní karty od levé hrany okna */
   height: 100svh;
   display: grid;
-  grid-template-rows: auto 1fr auto;
-  grid-template-columns: minmax(0, 1fr);
+  grid-template-columns: var(--side-w) minmax(0, 1fr);
   padding-block: 6rem 2.5rem;
 }
+.career-side {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding-left: var(--gutter);
+  min-height: 0;
+}
+.career .head { display: block; width: auto; margin: 0; }
+.career .head p { font-size: var(--t-md); max-width: 28ch; margin-top: 1rem; }
 .career .year {
-  position: absolute;
-  left: var(--gutter);
-  bottom: 2.25rem;
+  display: block;
   font-family: var(--display);
   font-stretch: 75%;
   font-weight: 700;
-  font-size: clamp(8rem, 21vw, 20rem);
+  font-size: clamp(6rem, 14vw, 13rem);
   line-height: 0.8;
   letter-spacing: -0.04em;
   color: var(--cobalt);
   font-variant-numeric: lining-nums tabular-nums;
   pointer-events: none;
-  z-index: 0;
+}
+.career-meter .progress { margin-top: 1.5rem; }
+.career-window {
+  min-width: 0;
+  overflow: hidden;
+  /* karty mizí do papíru, ne ostře uříznuté; konec přechodu = fokus, aktivní karta zůstává plně vidět */
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 var(--focus));
+  mask-image: linear-gradient(to right, transparent 0, #000 var(--focus));
 }
 .h-track {
-  position: relative;
-  z-index: 1;
   display: flex;
   gap: clamp(2rem, 4vw, 4rem);
   --card-w: clamp(18rem, 26vw, 25rem);
-  padding-left: 42vw;
-  /* střed poslední karty může dojet na střed okna */
-  padding-right: calc((100vw - var(--card-w)) / 2);
+  /* na 0 % je první karta ve fokusu */
+  padding-left: var(--focus);
+  /* % = šířka okna: levá hrana poslední karty může dojet do fokusu */
+  padding-right: max(0px, calc(100% - var(--focus) - var(--card-w)));
   align-items: start;
   width: max-content;
-  align-self: start;
-  justify-self: start;
-  margin: 3vh 0 0;
+  margin: 0;
   list-style: none;
+}
+/* bez JS / reduced motion: žádný pás, karty se zalomí v okně, nic se neořízne */
+@media (min-width: 900px) {
+  html:not(.motion) .career-inner { height: auto; }
+  html:not(.motion) .career-window { -webkit-mask-image: none; mask-image: none; }
+  html:not(.motion) .h-track { flex-wrap: wrap; width: auto; row-gap: 3.5rem; padding-right: var(--gutter); }
+  html:not(.motion) .career-meter { margin-top: 3rem; }
 }
 .job {
   width: var(--card-w);
@@ -226,7 +246,7 @@ section { position: relative; }
 .job h3 { font-family: var(--display); font-stretch: 75%; font-weight: 700; font-size: var(--t-lg); line-height: 1.05; margin: 0.6rem 0 0.35rem; }
 .job .co { font-weight: 600; font-size: var(--t-sm); }
 .job p.desc { color: var(--ink-soft); margin-top: 1rem; max-width: 36ch; }
-.progress { height: 2px; background: var(--paper-deep); position: relative; z-index: 1; }
+.progress { height: 2px; background: var(--paper-deep); position: relative; }
 .progress i { position: absolute; inset: 0; background: var(--cobalt); transform: scaleX(0); transform-origin: left; }
 
 /* ───── Projects (kusovník jako scény) ───── */
@@ -407,7 +427,11 @@ section.depth-on {
   .head { grid-template-columns: 1fr; gap: 0.5rem; }
   .about p { margin: 0; }
   .career-inner { height: auto; display: block; padding-block: 6rem; }
-  .career .year { display: none; }
+  .career-side { display: block; padding-left: 0; }
+  .career .head { display: grid; width: min(100% - 2 * var(--gutter), var(--max)); margin: 0 auto 3rem; }
+  .career .head p { font-size: var(--t-sm); max-width: none; margin-top: 0; }
+  .career-meter { display: none; }
+  .career-window { overflow: visible; -webkit-mask-image: none; mask-image: none; }
   .h-track { flex-direction: column; padding: 0 var(--gutter); width: auto; margin: 0; }
   .job { width: auto; }
   .progress { display: none; }

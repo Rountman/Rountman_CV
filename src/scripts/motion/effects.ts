@@ -20,8 +20,9 @@ import { gsap, SplitText, ScrollTrigger, ease, dur } from './core';
  *                         posledních 25 % pinu drží složenou mřížku; [data-assemble-rule] se narýsuje,
  *                         když dosedne první položka skupiny. Mobil: bez pinu, skupiny vyjedou při vjezdu
  *  data-scrub-words       odstavec, jehož slova se rozsvěcují podle scrollu
- *  data-horizontal        sekce s .h-track uvnitř → pin + horizontální posun, dokud střed poslední
- *                         karty nedojede na střed okna; pak krátké držení (5 % délky)
+ *  data-horizontal        sekce s .h-track v okně (rodič tracku) → pin + horizontální posun, dokud levá
+ *                         hrana poslední karty nedojede do fokusu (levá hrana okna + padding-left tracku);
+ *                         pak držení 25 % délky. Aktivní karta (.is-active) = levá hrana nejblíž fokusu
  *  data-year-counter      (uvnitř data-horizontal) velký letopočet podle aktivní karty
  *  data-rule              linka, která se při scrollu "narýsuje" zleva doprava
  *  data-speed="0.8"       parallax (1 = normálně, <1 pomaleji, >1 rychleji)
@@ -305,37 +306,40 @@ export function horizontal() {
   gsap.utils.toArray<HTMLElement>('[data-horizontal]').forEach((section) => {
     const track = section.querySelector<HTMLElement>('.h-track');
     if (!track) return;
+    const win = track.parentElement as HTMLElement; // okno, kterým pás jede
     const cards = gsap.utils.toArray<HTMLElement>('[data-year]', track);
     const counter = section.querySelector<HTMLElement>('[data-year-counter]');
     const bar = section.querySelector<HTMLElement>('[data-progress]');
-    const viewW = () => document.documentElement.clientWidth; // bez scrollbaru = vizuální střed
-    // posun tracku tak, aby střed POSLEDNÍ karty skončil na středu okna (layout, ne transformace)
+    // fokus = levá hrana okna + padding-left tracku (4vw); na 0 % v něm stojí první karta
+    const focusX = () => win.getBoundingClientRect().left + parseFloat(getComputedStyle(track).paddingLeft);
+    // posun tracku tak, aby levá hrana POSLEDNÍ karty dojela do fokusu (layout, ne transformace)
     const distance = () => {
+      const first = cards[0];
       const last = cards[cards.length - 1];
-      if (!last) return 0;
-      return Math.max(0, track.offsetLeft + last.offsetLeft + last.offsetWidth / 2 - viewW() / 2);
+      if (!first || !last) return 0;
+      return Math.max(0, last.offsetLeft - first.offsetLeft);
     };
-    const MOVE = 0.95, HOLD = 0.05; // podíly celé délky; krátké držení, pak hned scroll dolů
+    const MOVE = 0.75, HOLD = 0.25; // podíly celé délky; držení na poslední kartě
 
     let current = '';
     const sync = (progress: number) => {
       if (bar) bar.style.transform = `scaleX(${Math.min(1, progress / MOVE)})`;
-      if (!counter || !cards.length) return;
-      // aktivní karta = ta, jejíž střed je nejblíž středu obrazovky
-      const focus = viewW() * 0.5;
+      if (!cards.length) return;
+      // aktivní karta = ta, jejíž levá hrana je nejblíž fokusu
+      const focus = focusX();
       let best = cards[0];
       let bestD = Infinity;
       for (const c of cards) {
-        const r = c.getBoundingClientRect();
-        const d = Math.abs(r.left + r.width / 2 - focus);
+        const d = Math.abs(c.getBoundingClientRect().left - focus);
         if (d < bestD) { bestD = d; best = c; }
       }
       cards.forEach((c) => c.classList.toggle('is-active', c === best));
       const y = best.dataset.year ?? '';
-      if (y !== current) {
+      if (counter && y !== current) {
+        const first = current === '';
         current = y;
         counter.textContent = y;
-        gsap.fromTo(counter, { yPercent: 12, opacity: 0.4 }, { yPercent: 0, opacity: 1, duration: 0.5, ease: ease.soft, overwrite: true });
+        if (!first) gsap.fromTo(counter, { yPercent: 12, opacity: 0.4 }, { yPercent: 0, opacity: 1, duration: 0.5, ease: ease.soft, overwrite: true });
       }
     };
 
@@ -350,6 +354,7 @@ export function horizontal() {
         pin: true,
         scrub: 0.8,
         invalidateOnRefresh: true,
+        onRefresh: (self) => sync(self.animation?.progress() ?? 0),
       },
     });
     tl.to(track, { x: () => -distance(), ease: ease.scrub, duration: MOVE })
