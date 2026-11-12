@@ -1,0 +1,139 @@
+---
+import Base from '../layouts/Base.astro';
+import { person, about, career, projects, skills, studies } from '../data/cv';
+
+const [first, last] = person.name.split(' ');
+const years = career.map((j) => j.year);
+const span = `${Math.min(...years)}–${new Date().getFullYear()}`;
+---
+<Base
+  title={`${person.name} – ${person.role}`}
+  description={person.intro}
+>
+  <nav class="nav" aria-label="Main">
+    <a href="#top">{person.title} {person.name}</a>
+    <ul>
+      <li><a href="#work">Work</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <main id="top">
+    <!-- HERO: jediný orchestrovaný moment při načtení -->
+    <section class="hero wrap">
+      <div data-hero-out>
+        <div class="dim-wrap">
+          <h1 data-intro>{first}<span class="l2">{last}</span></h1>
+        </div>
+        <p class="dim" data-intro-fade><span>{span}, in production</span></p>
+      </div>
+      <div class="hero-foot">
+        <p data-intro-fade>{person.intro}</p>
+        <p class="meta" data-intro-fade>
+          {person.role}<br />{person.location}
+        </p>
+      </div>
+    </section>
+
+    <!-- ABOUT: slova se rozsvěcují podle scrollu -->
+    <section class="about block wrap" aria-labelledby="about-h">
+      <h2 id="about-h" class="visually-hidden">About</h2>
+      <p data-scrub-words>{about}</p>
+    </section>
+
+    <!-- CAREER: hlavní scroll moment, horizontální pás + letopočet -->
+    <section id="work" class="career" data-horizontal aria-labelledby="work-h">
+      <div class="career-inner">
+        <div class="wrap head">
+          <h2 id="work-h">Work</h2>
+          <p>Six roles, from machine control panels to client web apps.</p>
+        </div>
+        <span class="year" data-year-counter aria-hidden="true">{career[0].year}</span>
+        <ol class="h-track" role="list">
+          {career.map((job) => (
+            <li class="job" data-year={job.year}>
+              <span class="when">{job.from} – {job.to}</span>
+              <h3>{job.role}</h3>
+              <span class="co">{job.company}</span>
+              <p class="desc">{job.text}</p>
+            </li>
+          ))}
+        </ol>
+        <div class="progress wrap" aria-hidden="true"><i data-progress></i></div>
+      </div>
+    </section>
+
+    <!-- PROJECTS: kusovník -->
+    <section id="projects" class="block wrap" aria-labelledby="proj-h">
+      <div class="head">
+        <h2 id="proj-h">Projects</h2>
+        <p>A bill of materials. Source code on GitHub.</p>
+      </div>
+      <div class="rule" data-rule></div>
+      <table class="bom">
+        <thead>
+          <tr><th>Pos.</th><th>Part</th><th>Description</th><th>Built with</th></tr>
+        </thead>
+        <tbody>
+          {projects.map((p, i) => (
+            <tr>
+              <td class="pos">{String(i + 1).padStart(2, '0')}</td>
+              <td class="name"><a href={p.url} target="_blank" rel="noopener">{p.name}</a></td>
+              <td>{p.text}</td>
+              <td class="stack">{p.stack.join(', ')}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </section>
+
+    <!-- SKILLS -->
+    <section class="block wrap" aria-labelledby="skills-h">
+      <div class="head">
+        <h2 id="skills-h">Tools</h2>
+        <p>What I have shipped with, grouped by where it runs.</p>
+      </div>
+      <div class="rule" data-rule></div>
+      <div class="skills" style="margin-top:2.5rem">
+        {skills.map((g) => (
+          <div>
+            <h3>{g.group}</h3>
+            <ul>{g.items.map((s) => <li>{s}</li>)}</ul>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- STUDIES -->
+    <section class="block wrap" aria-labelledby="edu-h" style="padding-top:0">
+      <div class="head">
+        <h2 id="edu-h">Studies</h2>
+        <p>Still studying, part time.</p>
+      </div>
+      <ul class="studies">
+        {studies.map((s) => (
+          <li>
+            <span class="when">{s.when}</span>
+            <span class="school">{s.school}</span>
+            <span>{s.what}</span>
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" class="contact wrap" aria-labelledby="contact-h">
+      <h2 id="contact-h" class="lead">Open to collaborations and new work. Write to me:</h2>
+      <a class="mail" href={`mailto:${person.email}`}>{person.email}</a>
+      <div class="links">
+        <a href={person.github} target="_blank" rel="noopener">GitHub</a>
+        <a href={person.linkedin} target="_blank" rel="noopener">LinkedIn</a>
+      </div>
+      <footer>
+        <span>© {new Date().getFullYear()} {person.name}</span>
+        <a href="#top">Back to top</a>
+      </footer>
+    </section>
+  </main>
+</Base>
