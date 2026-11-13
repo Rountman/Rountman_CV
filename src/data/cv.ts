@@ -8,7 +8,6 @@ export const pathFor = (lang: Lang) => (lang === 'en' ? '/' : '/cs/');
 // Společné údaje, které se nepřekládají
 const shared = {
   name: 'Antonín Pecka',
-  title: 'Bc.',
   email: 'entonypecka@gmail.com',
   github: 'https://github.com/Rountman',
   linkedin: 'https://www.linkedin.com/in/antonin-pecka',
@@ -20,7 +19,6 @@ export type Job = {
   company: string;
   from: string;
   to: string;
-  year: number; // rok začátku
   /** etapa ve Work: 0 = čip (MIKROKLIMA, AR), 1 = telefon (Blendlens, PMI), 2 = prohlížeč (PekneWeby, freelance) */
   stage: 0 | 1 | 2;
   text: string;
@@ -39,7 +37,6 @@ const en = {
     role: 'Full-stack web developer',
     intro:
       'Full-stack web developer. I build web applications in React and TypeScript and connect them to backends and external services.',
-    location: 'Pardubice region, Czech Republic',
     cv: 'Antonin_Pecka_CV_EN.pdf', // v public/
   },
   // lead = první věta (--fg), rest = zbytek (--muted)
@@ -48,12 +45,12 @@ const en = {
     rest: 'I started with C#, .NET and WPF, moved to JavaScript with a Discord bot for MADMONQ that I still maintain today, and now I build full-stack web apps. I am into innovative development.',
   },
   career: [
-    { role: 'AR applications', company: 'Personal projects', from: '2020', to: '2023', year: 2020, stage: 0, text: 'Unity and C#, Blender modelling. AR demos published on GitHub.' },
-    { role: 'Software engineer', company: 'MIKROKLIMA s.r.o.', from: '2021', to: '2023', year: 2021, stage: 0, text: 'Embedded Wizard interfaces, WPF modernisation and Modbus/TCP tooling.' },
-    { role: 'Freelance developer', company: 'Self-employed', from: '2022', to: 'now', year: 2022, stage: 2, text: 'Shopify theme work and Discord automation for MADMONQ.' },
-    { role: 'IT operations & data analyst intern', company: 'Philip Morris International', from: 'Feb 2025', to: 'Oct 2025', year: 2025, stage: 1, text: 'Power BI and SQL reporting on SAP data, bills of materials and Excel exports. Coordinated a company-wide IT systems upgrade in production.' },
-    { role: 'Android developer', company: 'Blendlens', from: 'Oct 2025', to: 'Mar 2026', year: 2025, stage: 1, text: 'The Blendscan app in Kotlin and Jetpack Compose with an Azure backend.' },
-    { role: 'Full-stack web developer', company: 'PekneWeby s.r.o.', from: 'Mar 2026', to: 'now', year: 2026, stage: 2, text: 'React and TypeScript applications connected to backends and external services, including the frontend of the Chalupuj accommodation portal. Working directly with clients, estimating and splitting work in a small team.' },
+    { role: 'AR applications', company: 'Personal projects', from: '2020', to: '2023', stage: 0, text: 'Unity and C#, Blender modelling. AR demos published on GitHub.' },
+    { role: 'Software engineer', company: 'MIKROKLIMA s.r.o.', from: '2021', to: '2023', stage: 0, text: 'Embedded Wizard interfaces, WPF modernisation and Modbus/TCP tooling.' },
+    { role: 'Freelance developer', company: 'Self-employed', from: '2022', to: 'now', stage: 2, text: 'Shopify theme work and Discord automation for MADMONQ.' },
+    { role: 'IT operations & data analyst intern', company: 'Philip Morris International', from: 'Feb 2025', to: 'Oct 2025', stage: 1, text: 'Power BI and SQL reporting on SAP data, bills of materials and Excel exports. Coordinated a company-wide IT systems upgrade in production.' },
+    { role: 'Android developer', company: 'Blendlens', from: 'Oct 2025', to: 'Mar 2026', stage: 1, text: 'The Blendscan app in Kotlin and Jetpack Compose with an Azure backend.' },
+    { role: 'Full-stack web developer', company: 'PekneWeby s.r.o.', from: 'Mar 2026', to: 'now', stage: 2, text: 'React and TypeScript applications connected to backends and external services, including the frontend of the Chalupuj accommodation portal. Working directly with clients, estimating and splitting work in a small team.' },
   ] as Job[],
   projects: [
     { name: 'Chalupuj', text: 'React frontend of the Chalupuj accommodation portal.', stack: ['React'], url: 'https://chalupuj.cz' },
@@ -83,7 +80,6 @@ const en = {
     switchLabel: 'Česká verze',
     about: 'About',
     scrollHint: 'Scroll',
-    workLead: 'Six roles, from machine control panels to client web apps.',
     tools: 'Tools',
     toolsLead: 'What I have shipped with, grouped by where it runs.',
     studies: 'Studies',
@@ -100,7 +96,6 @@ const cs: typeof en = {
     role: 'Full-stack webový vývojář',
     intro:
       'Full-stack webový vývojář. Stavím webové aplikace v Reactu a TypeScriptu a napojuji je na backendy a externí služby.',
-    location: 'Pardubický kraj, Česko',
     cv: 'Antonin_Pecka_CV.pdf', // v public/
   },
   about: {
@@ -108,12 +103,12 @@ const cs: typeof en = {
     rest: 'Začínal jsem s C#, .NET a WPF, pak přešel na JavaScript s Discord botem pro MADMONQ, kterého udržuji dodnes, a dnes stavím full-stack webové aplikace. Baví mě inovativní vývoj.',
   },
   career: [
-    { role: 'AR aplikace', company: 'Osobní projekty', from: '2020', to: '2023', year: 2020, stage: 0, text: 'Unity a C#, modelování v Blenderu. AR dema zveřejněná na GitHubu.' },
-    { role: 'Softwarový inženýr', company: 'MIKROKLIMA s.r.o.', from: '2021', to: '2023', year: 2021, stage: 0, text: 'Rozhraní v Embedded Wizardu, modernizace WPF aplikací a nástroje pro Modbus/TCP.' },
-    { role: 'Freelance vývojář', company: 'OSVČ', from: '2022', to: 'dosud', year: 2022, stage: 2, text: 'Úpravy Shopify šablony a automatizace Discordu pro MADMONQ.' },
-    { role: 'Stážista v IT provozu a datové analýze', company: 'Philip Morris International', from: 'úno 2025', to: 'říj 2025', year: 2025, stage: 1, text: 'Reporting v Power BI a SQL nad daty ze SAPu, kusovníky a exporty do Excelu. Koordinace celofiremního upgradu IT systémů ve výrobě.' },
-    { role: 'Android vývojář', company: 'Blendlens', from: 'říj 2025', to: 'bře 2026', year: 2025, stage: 1, text: 'Aplikace Blendscan v Kotlinu a Jetpack Compose s backendem na Azure.' },
-    { role: 'Full-stack webový vývojář', company: 'PekneWeby s.r.o.', from: 'bře 2026', to: 'dosud', year: 2026, stage: 2, text: 'Aplikace v Reactu a TypeScriptu napojené na backendy a externí služby, mimo jiné frontend ubytovacího portálu Chalupuj. Přímá spolupráce s klienty, odhady a rozdělování práce v malém týmu.' },
+    { role: 'AR aplikace', company: 'Osobní projekty', from: '2020', to: '2023', stage: 0, text: 'Unity a C#, modelování v Blenderu. AR dema zveřejněná na GitHubu.' },
+    { role: 'Softwarový inženýr', company: 'MIKROKLIMA s.r.o.', from: '2021', to: '2023', stage: 0, text: 'Rozhraní v Embedded Wizardu, modernizace WPF aplikací a nástroje pro Modbus/TCP.' },
+    { role: 'Freelance vývojář', company: 'OSVČ', from: '2022', to: 'dosud', stage: 2, text: 'Úpravy Shopify šablony a automatizace Discordu pro MADMONQ.' },
+    { role: 'Stážista v IT provozu a datové analýze', company: 'Philip Morris International', from: 'úno 2025', to: 'říj 2025', stage: 1, text: 'Reporting v Power BI a SQL nad daty ze SAPu, kusovníky a exporty do Excelu. Koordinace celofiremního upgradu IT systémů ve výrobě.' },
+    { role: 'Android vývojář', company: 'Blendlens', from: 'říj 2025', to: 'bře 2026', stage: 1, text: 'Aplikace Blendscan v Kotlinu a Jetpack Compose s backendem na Azure.' },
+    { role: 'Full-stack webový vývojář', company: 'PekneWeby s.r.o.', from: 'bře 2026', to: 'dosud', stage: 2, text: 'Aplikace v Reactu a TypeScriptu napojené na backendy a externí služby, mimo jiné frontend ubytovacího portálu Chalupuj. Přímá spolupráce s klienty, odhady a rozdělování práce v malém týmu.' },
   ],
   projects: [
     { name: 'Chalupuj', text: 'React frontend ubytovacího portálu Chalupuj.', stack: ['React'], url: 'https://chalupuj.cz' },
@@ -143,7 +138,6 @@ const cs: typeof en = {
     switchLabel: 'English version',
     about: 'O mně',
     scrollHint: 'Scroll',
-    workLead: 'Šest rolí, od ovládacích panelů strojů po webové aplikace pro klienty.',
     tools: 'Nástroje',
     toolsLead: 'S čím jsem dodával software, seskupené podle toho, kde běží.',
     studies: 'Studium',

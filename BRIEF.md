@@ -48,7 +48,7 @@ Objekt: x a y jsou podíly poloviny šířky a výšky okna (0 = střed), s = sc
 | Studies | klidný seznam | bez pinu | objekt mimo obraz (odjel s Tools), sjíždí ke kontaktu |
 | Contact | e-mail na 1 řádek přes celou šířku (`min(4.5vw, 70px)` (e-mail má v Syne 800 šířku 20 em, víc se do obsahu nevejde), nowrap; mobil zalomit jen před „@“), objekt ztlumený za textem | min. 100vh | x 0, y 0.05, s 1.5, o 0.22, koule |
 
-- **Rozpočet:** pinnutý/sticky scroll ≈ 3,5 obrazovky, stránka ≈ 11–12 obrazovek
+- **Rozpočet:** pinnutý/sticky scroll ≈ 3,5 obrazovky, stránka ≈ 10–11 obrazovek
 - **Odpadá:** hero zoom, horizontální pás Work, scény Projects (efekty zůstávají v knihovně, na této stránce se nepoužijí)
 - **Vždy:** 2px progress bar nahoře, nápověda „Scroll“ (zmizí po 40 px scrollu)
 
