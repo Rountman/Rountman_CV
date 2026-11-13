@@ -28,7 +28,7 @@
   - Syne 600/800: jméno, nadpisy sekcí, názvy rolí a projektů, e-mail
   - Geist 400/500: text, navigace, metadata
 - **3D objekt (Three.js):**
-  - `MeshPhysicalMaterial`: color `#DFE3FF`, metalness 0.9, roughness 0.2, iridescence 1, iridescenceIOR 1.8, iridescenceThicknessRange [100, 1400] (spodní hodnota pomalu kolísá ±80), clearcoat 1, clearcoatRoughness 0.05, envMapIntensity 1.1, prostředí `RoomEnvironment`
+  - `MeshPhysicalMaterial`: color `#DFE3FF`, metalness 0.9, roughness 0.2, iridescence 1, iridescenceIOR 1.8, iridescenceThicknessRange [100, 1400] (spodní hodnota pomalu kolísá ±80), clearcoat 1 (mobil <800 px 0, rozdíl jen na odlescích), clearcoatRoughness 0.05, envMapIntensity 1.1, prostředí `RoomEnvironment`
   - světla: PointLight `#6F8CFF` (−4, 2, 4), PointLight `#FF8FD0` (4, −2, 3)
   - tvary = superelipsoidy z jedné `SphereGeometry` (desktop 140 segmentů, mobil 96): koule (1, 1, 1, n=2), čip (0.95, 0.95, 0.14, n=14), telefon (0.58, 1.15, 0.12, n=9), prohlížeč (1.45, 0.92, 0.1, n=9)
   - morph tvaru přímo podle scrollu (bez zpoždění). Pozice, scale a opacity dojíždějí lerpem přes delta time: `k = 1 − 0.92^(dt·60)` (= 0.08 za snímek při 60 fps, stejné tempo na 120 Hz)
