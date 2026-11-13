@@ -333,10 +333,11 @@ section { position: relative; }
   gap: 2.5rem 2rem;
   margin-top: 3rem;
 }
-.tool-group h3 { font-size: var(--t-sm); font-weight: 500; color: var(--muted); }
-.tool-group .rule { display: block; margin: 0.6rem 0 0.9rem; }
+/* Tools: jen barvy a písma; mřížka a data-assemble beze změny */
+.tool-group h3 { font-family: var(--text); font-size: var(--t-sm); font-weight: 400; color: var(--muted); }
+.tool-group .rule { display: block; margin: 0.6rem 0 0.9rem; background: var(--line); }
 .tool-group ul { list-style: none; margin: 0; padding: 0; }
-.tool-group li { font-family: var(--display); font-weight: 600; font-size: var(--t-md); line-height: 1.4; }
+.tool-group li { font-family: var(--text); font-weight: 500; font-size: var(--t-md); line-height: 1.45; color: var(--fg); }
 
 .tools.depth-on { display: flex; flex-direction: column; justify-content: center; }
 .depth-on .tool-groups { perspective: 1000px; transform-style: preserve-3d; }

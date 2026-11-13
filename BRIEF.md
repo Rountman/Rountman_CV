@@ -44,8 +44,8 @@ Objekt: x a y jsou podíly poloviny šířky a výšky okna (0 = střed), s = sc
 | About | velký text vlevo (max. 22ch), objekt vpravo | ~110vh, bez pinu | x 0.55, y 0, s 0.75, o 0.9, koule |
 | Work | **hlavní moment.** Sticky 100vh: vlevo nadpis a panel se 2 rolemi, vpravo objekt. 3 etapy: čip (MIKROKLIMA, AR), telefon (Blendlens, PMI), prohlížeč (PekneWeby, freelance). Kroky dole | sekce 330vh, sticky (≈2,3 obrazovky) | x 0.5, y 0, s 0.95–1, o 1, tvar podle etapy |
 | Projects | nadpis vlevo, seznam vpravo, objekt malý vlevo dole | bez pinu | x −0.68, y −0.38, s 0.45, o 0.8, koule |
-| Tools | skupiny dovedností jako čitelná mřížka (`data-assemble`, tmavé barvy) | pin +120 % | x 0.7, y 0.3, s 0.35, o 0.25, koule |
-| Studies | klidný seznam | bez pinu | stejně jako Tools |
+| Tools | skupiny dovedností jako čitelná mřížka (`data-assemble`, tmavé barvy) | pin +120 % | x 0.7, y 0.5, s 0.3, o 0.25, koule (nad mřížkou i na 1280×800); po pinu odjede se sekcí |
+| Studies | klidný seznam | bez pinu | objekt mimo obraz (odjel s Tools), sjíždí ke kontaktu |
 | Contact | e-mail na 1 řádek přes celou šířku (`min(4.5vw, 70px)` (e-mail má v Syne 800 šířku 20 em, víc se do obsahu nevejde), nowrap; mobil zalomit jen před „@“), objekt ztlumený za textem | min. 100vh | x 0, y 0.05, s 1.5, o 0.22, koule |
 
 - **Rozpočet:** pinnutý/sticky scroll ≈ 3,5 obrazovky, stránka ≈ 11–12 obrazovek

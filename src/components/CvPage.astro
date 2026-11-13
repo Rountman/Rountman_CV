@@ -18,6 +18,8 @@ const core = (x: number, y: number, s: number, o: number, shape = 'sphere', m?: 
   JSON.stringify({ x, y, s, o, shape, ...(m && { m }), ...(mobile && { mobile }) });
 // mobil ve Work: text dole, objekt menší nahoře (nad nadpisem)
 const workMobile: Pose = { x: 0, y: 0.55, s: 0.55, o: 0.8 };
+// mobil v Tools a Studies jako dřív (y 0.3 + 0.25, s 0.35 × 0.7, o 0.25 × 0.6)
+const toolsMobile: Pose = { x: 0, y: 0.55, s: 0.245, o: 0.15 };
 const anchor = {
   hero: core(0, 0.12, 1.25, 1),
   about: core(0.55, 0, 0.75, 0.9),
@@ -28,7 +30,15 @@ const anchor = {
     core(0.5, 0, 0.95, 1, 'browser', undefined, workMobile),
   ],
   projects: core(-0.68, -0.38, 0.45, 0.8),
-  tools: core(0.7, 0.3, 0.35, 0.25),
+  // Tools (pin +120 %): koule vpravo nahoře NAD mřížkou (y 0.5, s 0.3; při y 0.3 / s 0.35 ji na 1280×800
+  // překrývala), drží celý pin a po pinu odjede lineárně se sekcí (y +2 za 100vh), ať jí mřížka neprojede.
+  // Kotvy s `at` platí jen s pinem (mobil a reduced motion je vynechají). Studies vlastní kotvu nemá:
+  // je kratší než okno, její kotva by vyšla před konec pinu; objekt se vrátí až za e-mail v Contact
+  tools: JSON.stringify([
+    { x: 0.7, y: 0.5, s: 0.3, o: 0.25, mobile: toolsMobile },
+    { x: 0.7, y: 0.5, s: 0.3, o: 0.25, at: 120 },
+    { x: 0.7, y: 2.5, s: 0.3, o: 0.25, at: 220, ease: 'linear' },
+  ]),
   contact: core(0, 0.05, 1.5, 0.22),
 };
 // Work: role po etapách, v etapě od nejnovější
@@ -137,7 +147,7 @@ const stages = [0, 1, 2].map((st) => career.filter((j) => j.stage === st).revers
     </section>
 
     <!-- STUDIES -->
-    <section class="block wrap" data-core={anchor.tools} aria-labelledby="edu-h">
+    <section class="block wrap" aria-labelledby="edu-h">
       <div class="head">
         <h2 id="edu-h">{ui.studies}</h2>
         <p>{ui.studiesLead}</p>
