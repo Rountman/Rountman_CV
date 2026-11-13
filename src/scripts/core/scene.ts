@@ -30,6 +30,8 @@ const LERP_PER_FRAME = 0.08; // při 60 fps; přes delta time: k = 1 − 0.92^(d
 /** Úvodní moment stránky: po načtení scény opacity 0 → 1, scale 0.85 → 1.25 (u hera), power3.out */
 const INTRO_S = 1.2;
 const INTRO_FROM = 0.85 / 1.25;
+/** Načtení za půlkou hera: žádný přílet, jen opacity 0 → cílová za 0.4 s (bez scale) */
+const FADE_S = 0.4;
 const TAU = Math.PI * 2;
 
 function superellipsoid(base: Float32Array, [a, b, c, n]: [number, number, number, number]) {
@@ -133,6 +135,8 @@ export function startScene(canvas: HTMLCanvasElement, state: CoreState) {
   let last = -1;
   let raf = 0;
   let intro = state.reduce ? 1 : 0; // reduced motion: rovnou finální stav
+  const introS = state.pastHero() ? FADE_S : INTRO_S;
+  const introFrom = state.pastHero() ? 1 : INTRO_FROM;
 
   function frame(now: number) {
     if (last < 0) performance.mark('core:first-frame'); // měření vůči LCP (DevTools / Lighthouse)
@@ -158,9 +162,9 @@ export function startScene(canvas: HTMLCanvasElement, state: CoreState) {
     setShape(t.shapeA, t.shapeB, morph);
 
     mesh.position.set(cur.x * halfW, cur.y * halfH, 0);
-    if (intro < 1) intro = state.reduce ? 1 : Math.min(1, intro + dt / INTRO_S);
+    if (intro < 1) intro = state.reduce ? 1 : Math.min(1, intro + dt / introS);
     const e = 1 - (1 - intro) ** 3;
-    mesh.scale.setScalar(cur.s * (INTRO_FROM + (1 - INTRO_FROM) * e));
+    mesh.scale.setScalar(cur.s * (introFrom + (1 - introFrom) * e));
     material.opacity = cur.o * e;
 
     if (reduce) {

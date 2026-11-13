@@ -16,6 +16,8 @@ export type CoreState = {
   reduce: boolean;
   /** cíl pro aktuální scroll, už s úpravou pro mobil */
   target: () => Target;
+  /** true = stránka je při načtení scény odscrollovaná za půl hera → bez příletu, jen fade */
+  pastHero: () => boolean;
 };
 
 const MOBILE = '(max-width: 799px)';
@@ -51,6 +53,10 @@ export function initCore() {
     mobile: mqMobile.matches,
     reduce: mqReduce.matches,
     target: () => forViewport(anchors.target(window.scrollY), state.mobile),
+    pastHero: () => {
+      const hero = document.querySelector<HTMLElement>('[data-core]');
+      return !!hero && window.scrollY > hero.offsetHeight * 0.5;
+    },
   };
   mqMobile.addEventListener('change', (e) => { state.mobile = e.matches; anchors.measure(); });
   mqReduce.addEventListener('change', (e) => { state.reduce = e.matches; });
