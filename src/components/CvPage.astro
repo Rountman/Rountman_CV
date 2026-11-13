@@ -61,7 +61,7 @@ const stages = [0, 1, 2].map((st) => career.filter((j) => j.stage === st).revers
       <li><a href="#work">{ui.nav.work}</a></li>
       <li><a href="#projects">{ui.nav.projects}</a></li>
       <li><a href="#contact">{ui.nav.contact}</a></li>
-      <li><a href={withBase(pathFor(other))} hreflang={other} lang={other} aria-label={ui.switchLabel}>{ui.switchTo}</a></li>
+      <li><a href={withBase(pathFor(other))} hreflang={other} lang={other} aria-label={ui.switchLabel} data-lang-switch>{ui.switchTo}</a></li>
     </ul>
   </nav>
 
@@ -78,7 +78,7 @@ const stages = [0, 1, 2].map((st) => career.filter((j) => j.stage === st).revers
     </section>
 
     <!-- ABOUT: velký text vlevo, objekt vpravo -->
-    <section class="about" data-core={anchor.about} aria-labelledby="about-h">
+    <section id="about" class="about" data-core={anchor.about} aria-labelledby="about-h">
       <h2 id="about-h" class="visually-hidden">{ui.about}</h2>
       <p>{about.lead} <span class="rest">{about.rest}</span></p>
     </section>
@@ -128,7 +128,7 @@ const stages = [0, 1, 2].map((st) => career.filter((j) => j.stage === st).revers
     </section>
 
     <!-- TOOLS: sestavení z hloubky (bez JS / reduced motion = statická mřížka skupin) -->
-    <section class="tools wrap-pad" data-assemble data-core={anchor.tools} aria-labelledby="skills-h">
+    <section id="tools" class="tools wrap-pad" data-assemble data-core={anchor.tools} aria-labelledby="skills-h">
       <div class="tools-head">
         <h2 id="skills-h">{ui.tools}</h2>
         <p>{ui.toolsLead}</p>
@@ -147,7 +147,7 @@ const stages = [0, 1, 2].map((st) => career.filter((j) => j.stage === st).revers
     </section>
 
     <!-- STUDIES -->
-    <section class="block wrap" aria-labelledby="edu-h">
+    <section id="studies" class="block wrap" aria-labelledby="edu-h">
       <div class="head">
         <h2 id="edu-h">{ui.studies}</h2>
         <p>{ui.studiesLead}</p>

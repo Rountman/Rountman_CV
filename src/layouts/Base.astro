@@ -62,10 +62,12 @@ const fontFaces = [
     <script>
       import { initMotion } from '../scripts/motion';
       import { initCore } from '../scripts/core';
-      import { initChrome } from '../scripts/chrome';
+      import { initChrome, initLangSwitch, restoreHash } from '../scripts/chrome';
       initChrome();
+      initLangSwitch();
       initMotion();
       initCore();
+      restoreHash();
     </script>
   </body>
 </html>
