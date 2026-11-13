@@ -351,8 +351,18 @@ section { position: relative; }
 .studies .school { font-weight: 500; }
 
 /* ───── Contact ───── */
-.contact { padding-block: clamp(7rem, 16vw, 13rem) 2.5rem; }
-.contact .lead { color: var(--muted); margin-bottom: 1.5rem; font-weight: 400; font-size: var(--t-md); }
+.contact { min-height: 100svh; display: flex; flex-direction: column; padding-bottom: 2.5rem; }
+.contact-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1.75rem;
+  padding-top: 6rem;
+  text-align: center;
+}
+.contact .lead { color: var(--muted); font-weight: 400; font-size: var(--t-md); }
 .contact .mail {
   font-family: var(--display);
   font-weight: 800;
@@ -363,10 +373,10 @@ section { position: relative; }
   white-space: nowrap;
 }
 .contact .mail wbr { display: none; } /* desktop: Chrome by na <wbr> zalomil i přes nowrap */
-.contact .links { display: flex; gap: 2rem; margin-top: 3rem; flex-wrap: wrap; }
+.contact .links { display: flex; justify-content: center; gap: 1.75rem; flex-wrap: wrap; }
 .contact .links a { color: var(--muted); text-decoration: none; transition: color 0.2s; }
 .contact .links a:hover { color: var(--fg); }
-.contact footer { display: flex; justify-content: space-between; margin-top: 7rem; font-size: var(--t-sm); color: var(--muted); }
+.contact footer { display: flex; justify-content: space-between; font-size: var(--t-sm); color: var(--muted); }
 
 /* ───── Knihovna: strukturní CSS efektů, které tato stránka nepoužívá ───── */
 /* data-depth-scenes: JS přidá .depth-on, scény na středu přes sebe */

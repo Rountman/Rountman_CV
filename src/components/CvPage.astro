@@ -163,14 +163,16 @@ const stages = [0, 1, 2].map((st) => career.filter((j) => j.stage === st).revers
       </ul>
     </section>
 
-    <!-- CONTACT -->
+    <!-- CONTACT: min. 100svh, e-mail na 1 řádek přes celou šířku, objekt ztlumený za textem -->
     <section id="contact" class="contact wrap" data-core={anchor.contact} aria-labelledby="contact-h">
-      <h2 id="contact-h" class="lead">{ui.contactLead}</h2>
-      <a class="mail" href={`mailto:${person.email}`}>{person.email.split('@')[0]}<wbr />@{person.email.split('@')[1]}</a>
-      <div class="links">
-        <a href={person.github} target="_blank" rel="noopener">GitHub</a>
-        <a href={person.linkedin} target="_blank" rel="noopener">LinkedIn</a>
-        <a href={withBase(person.cv)} download>{ui.downloadCv}</a>
+      <div class="contact-body">
+        <h2 id="contact-h" class="lead">{ui.contactLead}</h2>
+        <a class="mail" href={`mailto:${person.email}`}>{person.email.split('@')[0]}<wbr />@{person.email.split('@')[1]}</a>
+        <div class="links">
+          <a href={person.github} target="_blank" rel="noopener">GitHub</a>
+          <a href={person.linkedin} target="_blank" rel="noopener">LinkedIn</a>
+          <a href={withBase(person.cv)} download>{ui.downloadCv}</a>
+        </div>
       </div>
       <footer>
         <span>© {new Date().getFullYear()} {person.name}</span>
