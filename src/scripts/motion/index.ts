@@ -1,6 +1,6 @@
 import { gsap, ScrollTrigger } from './core';
 import { initLenis } from './lenis';
-import { intro, heroZoom, depthScenes, tunnel, assemble, scrubWords, horizontal, rules, parallax } from './effects';
+import { intro, heroZoom, depthScenes, tunnel, assemble, scrubWords, horizontal, rules, parallax, stages } from './effects';
 import { frameScrubbers } from './frameScrubber';
 
 /**
@@ -20,13 +20,16 @@ export function initMotion() {
     (ctx) => {
       const { motion, desktop } = ctx.conditions as { motion: boolean; desktop: boolean };
       const root = document.documentElement;
+      // sticky etapy mění výšku sekce → musí být před piny; běží i při reduced motion (stav obsahu)
+      const stagesCleanup = stages();
       if (!motion) {
         root.classList.remove('motion');
-        return;
+        ScrollTrigger.refresh();
+        return stagesCleanup;
       }
       root.classList.add('motion');
 
-      const cleanups: (void | (() => void))[] = [];
+      const cleanups: (void | (() => void))[] = [stagesCleanup];
       if (desktop) cleanups.push(initLenis());
       // piny vytvářej v pořadí, v jakém jsou na stránce (jinak nesedí start/end následujících)
       cleanups.push(frameScrubbers());

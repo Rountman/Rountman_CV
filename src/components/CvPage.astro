@@ -11,16 +11,28 @@ const { person, about, career, projects, skills, studies, ui } = content[lang];
 const [first, last] = person.name.split(' ');
 const initials = person.name.split(' ').map((w) => w[0]).join('');
 
-// Kotvy 3D objektu (storyboard v BRIEF.md): x, y = podíl poloviny okna, s = scale, o = opacity
-const core = (x: number, y: number, s: number, o: number, shape = 'sphere') => JSON.stringify({ x, y, s, o, shape });
+// Kotvy 3D objektu (storyboard v BRIEF.md): x, y = podíl poloviny okna, s = scale, o = opacity,
+// m = volitelné okno morphu tvaru na cestě k této kotvě (viz scripts/core/anchors.ts)
+type Pose = { x?: number; y?: number; s?: number; o?: number };
+const core = (x: number, y: number, s: number, o: number, shape = 'sphere', m?: [number, number], mobile?: Pose) =>
+  JSON.stringify({ x, y, s, o, shape, ...(m && { m }), ...(mobile && { mobile }) });
+// mobil ve Work: text dole, objekt menší nahoře (nad nadpisem)
+const workMobile: Pose = { x: 0, y: 0.55, s: 0.55, o: 0.8 };
 const anchor = {
   hero: core(0, 0.12, 1.25, 1),
   about: core(0.55, 0, 0.75, 0.9),
-  work: core(0.5, 0, 0.95, 1, 'chip'), // etapy čip → telefon → prohlížeč přijdou s přestavbou Work
+  // Work: markery etap na 0, 115vh a 230vh sticky sekce (330vh). Čip dojede až se sticky
+  work: [
+    core(0.5, 0, 0.95, 1, 'chip', [0.75, 1], workMobile),
+    core(0.5, 0, 1, 1, 'phone', undefined, workMobile),
+    core(0.5, 0, 0.95, 1, 'browser', undefined, workMobile),
+  ],
   projects: core(-0.68, -0.38, 0.45, 0.8),
   tools: core(0.7, 0.3, 0.35, 0.25),
   contact: core(0, 0.05, 1.5, 0.22),
 };
+// Work: role po etapách, v etapě od nejnovější
+const stages = [0, 1, 2].map((st) => career.filter((j) => j.stage === st).reverse());
 ---
 <Base
   lang={lang}
@@ -61,29 +73,29 @@ const anchor = {
       <p>{about.lead} <span class="rest">{about.rest}</span></p>
     </section>
 
-    <!-- CAREER: hlavní scroll moment, horizontální pás + letopočet -->
-    <section id="work" class="career" data-horizontal data-core={anchor.work} aria-labelledby="work-h">
-      <div class="career-inner">
-        <div class="career-side">
-          <div class="wrap head">
-            <h2 id="work-h">{ui.nav.work}</h2>
-            <p>{ui.workLead}</p>
-          </div>
-          <div class="career-meter" aria-hidden="true">
-            <span class="year" data-year-counter>{career[0].year}</span>
-            <div class="progress"><i data-progress></i></div>
-          </div>
-        </div>
-        <div class="career-window">
-          <ol class="h-track" role="list">
-            {career.map((job) => (
-              <li class="job" data-year={job.year}>
-                <span class="when">{job.from} – {job.to}</span>
-                <h3>{job.role}</h3>
-                <span class="co">{job.company}</span>
-                <p class="desc">{job.text}</p>
-              </li>
+    <!-- WORK: hlavní moment. Sticky 100vh v sekci 330vh: vlevo nadpis + panel se 2 rolemi, vpravo objekt.
+         Etapy (data-stages): čip → telefon → prohlížeč; bez JS = seznam všech rolí -->
+    <section id="work" class="work" data-stages aria-labelledby="work-h">
+      {anchor.work.map((k, i) => <div class="work-mark" style={`--at:${i * 115}vh`} data-stage-mark data-core={k} aria-hidden="true"></div>)}
+      <div class="work-sticky">
+        <div class="work-text">
+          <h2 id="work-h">{ui.nav.work}</h2>
+          <div class="panels">
+            {stages.map((jobs) => (
+              <article class="panel" data-stage-panel>
+                {jobs.map((job) => (
+                  <div class="role">
+                    <span class="when">{job.from} – {job.to}</span>
+                    <h3>{job.role}</h3>
+                    <span class="co">{job.company}</span>
+                    <p>{job.text}</p>
+                  </div>
+                ))}
+              </article>
             ))}
+          </div>
+          <ol class="steps" aria-hidden="true">
+            {stages.map(() => <li data-stage-step></li>)}
           </ol>
         </div>
       </div>

@@ -231,75 +231,67 @@ section { position: relative; }
 }
 .about .rest { color: var(--muted); }
 
-/* ───── Career (horizontal) ───── */
-.career { overflow: hidden; }
-.career-inner {
-  --side-w: max(22rem, 30vw);
-  --focus: 4vw;
-  height: 100svh;
-  display: grid;
-  grid-template-columns: var(--side-w) minmax(0, 1fr);
-  padding-block: 6rem 2.5rem;
-}
-.career-side {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding-left: var(--gutter);
-  min-height: 0;
-}
-.career .head { display: block; width: auto; margin: 0; }
-.career .head p { font-size: var(--t-md); max-width: 28ch; margin-top: 1rem; }
-.career .year {
-  display: block;
+/* ───── Work: sticky etapy (data-stages) ─────
+   Bez JS: nadpis + všechny role pod sebou. S JS (.stages-on): sekce 330vh, sticky 100vh,
+   panely přes sebe v jedné buňce mřížky (výška = nejvyšší panel), aktivní podle markeru */
+.work-sticky { padding: clamp(6rem, 14vw, 11rem) var(--gutter); }
+.work h2 {
+  margin-bottom: 1.75rem;
   font-family: var(--display);
   font-weight: 800;
-  font-size: clamp(5rem, 11vw, 10rem);
-  line-height: 0.8;
-  letter-spacing: -0.04em;
-  font-variant-numeric: lining-nums tabular-nums;
+  font-size: var(--t-xl);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+.panels { display: grid; gap: 3.5rem; }
+.panel { display: flex; flex-direction: column; gap: 1.75rem; }
+.role .when { color: var(--muted); font-size: var(--t-sm); font-variant-numeric: tabular-nums; }
+.role h3 {
+  max-width: 20ch;
+  margin: 0.375rem 0 0.125rem;
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: clamp(1.375rem, 1rem + 1vw, 1.875rem);
+  line-height: 1.1;
+}
+.role .co { display: block; margin-bottom: 0.5rem; font-size: var(--t-sm); font-weight: 500; }
+.role p { max-width: 46ch; color: var(--muted); line-height: 1.55; }
+.work-mark, .steps { display: none; }
+
+.work.stages-on { height: 330vh; }
+.stages-on .work-mark {
+  display: block;
+  position: absolute;
+  left: 0;
+  top: var(--at);
+  width: 1px;
+  height: 100vh;
   pointer-events: none;
 }
-.career-meter .progress { margin-top: 1.5rem; }
-.career-window {
-  min-width: 0;
-  overflow: hidden;
-  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 var(--focus));
-  mask-image: linear-gradient(to right, transparent 0, #000 var(--focus));
+.stages-on .work-sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); /* vpravo objekt */
+  align-items: center;
+  padding-block: 0;
 }
-.h-track {
-  display: flex;
-  gap: clamp(2rem, 4vw, 4rem);
-  --card-w: clamp(18rem, 26vw, 25rem);
-  padding-left: var(--focus);
-  padding-right: max(0px, calc(100% - var(--focus) - var(--card-w)));
-  align-items: start;
-  width: max-content;
-  margin: 0;
-  list-style: none;
+.stages-on .panels { gap: 0; }
+.stages-on .panel {
+  grid-area: 1 / 1;
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.2s, transform 0.2s; /* odchod */
 }
-@media (min-width: 800px) {
-  html:not(.motion) .career-inner { height: auto; }
-  html:not(.motion) .career-window { -webkit-mask-image: none; mask-image: none; }
-  html:not(.motion) .h-track { flex-wrap: wrap; width: auto; row-gap: 3.5rem; padding-right: var(--gutter); }
-  html:not(.motion) .career-meter { margin-top: 3rem; }
+.stages-on .panel.is-active {
+  opacity: 1;
+  transform: none;
+  transition: opacity 0.45s 0.2s, transform 0.45s 0.2s; /* příchod až po odchodu */
 }
-.job {
-  width: var(--card-w);
-  padding-top: 1.25rem;
-  border-top: 1px solid var(--line-strong);
-  transition: opacity 0.4s;
-}
-@media (min-width: 800px) {
-  .motion .h-track .job { opacity: 0.35; }
-  .motion .h-track .job.is-active { opacity: 1; }
-}
-.job .when { color: var(--muted); font-size: var(--t-sm); font-variant-numeric: tabular-nums; }
-.job h3 { font-family: var(--display); font-weight: 800; font-size: var(--t-lg); line-height: 1.1; margin: 0.6rem 0 0.35rem; }
-.job .co { font-weight: 500; font-size: var(--t-sm); }
-.job p.desc { color: var(--muted); margin-top: 1rem; max-width: 36ch; }
-.progress { height: 2px; background: var(--line); position: relative; }
-.progress i { position: absolute; inset: 0; background: var(--fg); transform: scaleX(0); transform-origin: left; }
+.stages-on .steps { display: flex; gap: 0.625rem; margin: 2.25rem 0 0; padding: 0; list-style: none; }
+.steps li { width: 2.75rem; height: 3px; border-radius: 2px; background: var(--line); transition: background 0.4s; }
+.steps li.is-active { background: var(--fg); }
 
 /* ───── Projects: nadpis vlevo, seznam vpravo ───── */
 .projects {
@@ -410,16 +402,13 @@ section.depth-on {
   /* objekt na mobilu: y 0.12 + 0.25 → střed 31.5 % výšky */
   .rings { top: 31.5%; }
   .head { grid-template-columns: 1fr; gap: 0.5rem; }
-  .career-inner { height: auto; display: block; padding-block: 6rem; }
-  .career-side { display: block; padding-left: 0; }
-  .career .head { display: grid; width: min(100% - 2 * var(--gutter), var(--max)); margin: 0 auto 3rem; }
-  .career .head p { font-size: var(--t-sm); max-width: none; margin-top: 0; }
-  .career-meter { display: none; }
-  .career-window { overflow: visible; -webkit-mask-image: none; mask-image: none; }
-  .h-track { flex-direction: column; padding: 0 var(--gutter); width: auto; margin: 0; }
-  .job { width: auto; }
-  .progress { display: none; }
   .projects { grid-template-columns: 1fr; padding-block: 8rem 6rem; }
+  /* Work: text dole, objekt nahoře */
+  .stages-on .work-sticky { grid-template-columns: 1fr; align-content: end; align-items: end; padding-bottom: 7vh; }
+  .work h2 { margin-bottom: 1.25rem; }
+  .panel { gap: 1.25rem; }
+  .role p { font-size: var(--t-sm); line-height: 1.5; }
+  .stages-on .steps { margin-top: 1.5rem; }
   .studies li { grid-template-columns: 1fr; gap: 0.25rem; }
   .tool-groups { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2rem 1.25rem; }
   .tool-group li { font-size: var(--t-base); }

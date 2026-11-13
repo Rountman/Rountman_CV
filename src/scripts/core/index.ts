@@ -14,7 +14,7 @@ import { createAnchors, type Target } from './anchors';
 export type CoreState = {
   mobile: boolean;
   reduce: boolean;
-  /** cíl pro aktuální scroll, už s úpravou pro mobil */
+  /** cíl pro aktuální scroll, pro mobil s mobilními hodnotami kotev */
   target: () => Target;
   /** true = stránka je při načtení scény odscrollovaná za půl hera → bez příletu, jen fade */
   pastHero: () => boolean;
@@ -22,12 +22,6 @@ export type CoreState = {
 
 const MOBILE = '(max-width: 799px)';
 const REDUCE = '(prefers-reduced-motion: reduce)';
-
-/** Mobil: objekt na středu za textem (x 0, y +0.25, s × 0.7, o × 0.6). */
-function forViewport(t: Target, mobile: boolean): Target {
-  if (!mobile) return t;
-  return { ...t, x: 0, y: t.y + 0.25, s: t.s * 0.7, o: t.o * 0.6 };
-}
 
 function hasWebGL() {
   if (new URLSearchParams(location.search).has('nogl')) return false;
@@ -52,7 +46,7 @@ export function initCore() {
   const state: CoreState = {
     mobile: mqMobile.matches,
     reduce: mqReduce.matches,
-    target: () => forViewport(anchors.target(window.scrollY), state.mobile),
+    target: () => anchors.target(window.scrollY, state.mobile),
     pastHero: () => {
       const hero = document.querySelector<HTMLElement>('[data-core]');
       return !!hero && window.scrollY > hero.offsetHeight * 0.5;

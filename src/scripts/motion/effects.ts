@@ -26,6 +26,11 @@ import { gsap, SplitText, ScrollTrigger, ease, dur } from './core';
  *  data-year-counter      (uvnitř data-horizontal) velký letopočet podle aktivní karty
  *  data-rule              linka, která se při scrollu "narýsuje" zleva doprava
  *  data-speed="0.8"       parallax (1 = normálně, <1 pomaleji, >1 rychleji)
+ *  data-stages            sticky příběh bez pinu (CSS position: sticky): JS přidá .stages-on (sekce dostane
+ *                         výšku z CSS, např. 330vh). Etapy = [data-stage-mark] (absolutně v sekci, 100vh vysoké);
+ *                         aktivní = marker, jehož horní hrana je nejblíž horní hraně okna (přepnutí v půlce
+ *                         mezi markery). Aktivní [data-stage-panel] a [data-stage-step] dostanou .is-active.
+ *                         Běží i při reduced motion (je to stav obsahu, ne animace); bez JS = seznam
  *
  *  (data-core = skleněné jádro je samostatný modul src/scripts/core/, viz jeho index.ts)
  */
@@ -364,6 +369,43 @@ export function horizontal() {
       .to({}, { duration: HOLD }); // prázdný krok: držení na poslední kartě
     sync(0);
   });
+}
+
+export function stages() {
+  const cleanups: (() => void)[] = [];
+  gsap.utils.toArray<HTMLElement>('[data-stages]').forEach((section) => {
+    const marks = gsap.utils.toArray<HTMLElement>('[data-stage-mark]', section);
+    const panels = gsap.utils.toArray<HTMLElement>('[data-stage-panel]', section);
+    const steps = gsap.utils.toArray<HTMLElement>('[data-stage-step]', section);
+    if (!marks.length) return;
+    section.classList.add('stages-on');
+    let current = -1;
+    const update = () => {
+      let best = 0, bestD = Infinity;
+      marks.forEach((m, i) => {
+        const d = Math.abs(m.getBoundingClientRect().top);
+        if (d < bestD) { bestD = d; best = i; }
+      });
+      if (best === current) return;
+      current = best;
+      panels.forEach((p, i) => {
+        p.classList.toggle('is-active', i === best);
+        p.toggleAttribute('inert', i !== best); // neaktivní panel není vidět → ani pro klávesnici a čtečku
+      });
+      steps.forEach((p, i) => p.classList.toggle('is-active', i === best));
+    };
+    addEventListener('scroll', update, { passive: true });
+    addEventListener('resize', update);
+    update();
+    cleanups.push(() => {
+      removeEventListener('scroll', update);
+      removeEventListener('resize', update);
+      section.classList.remove('stages-on');
+      panels.forEach((p) => { p.classList.remove('is-active'); p.removeAttribute('inert'); });
+      steps.forEach((p) => p.classList.remove('is-active'));
+    });
+  });
+  return () => cleanups.forEach((c) => c());
 }
 
 export function rules() {
