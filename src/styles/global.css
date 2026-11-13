@@ -84,7 +84,7 @@ h1, h2, h3, p { margin: 0; }
 }
 .no-gl .core-canvas { display: none; }
 .no-gl .core-fallback { display: block; }
-main, .contact footer { position: relative; z-index: 1; }
+main { position: relative; z-index: 1; }
 
 /* ───── Nav ───── */
 .nav {
@@ -209,7 +209,7 @@ main, .contact footer { position: relative; z-index: 1; }
   letter-spacing: -0.02em;
 }
 .head p { color: var(--muted); font-size: var(--t-sm); }
-.rule { height: 1px; background: var(--line-strong); transform-origin: left; }
+.rule { height: 1px; background: var(--line); transform-origin: left; }
 
 section { position: relative; }
 .block { padding-block: clamp(6rem, 14vw, 11rem); }
@@ -335,7 +335,7 @@ section { position: relative; }
 }
 /* Tools: jen barvy a písma; mřížka a data-assemble beze změny */
 .tool-group h3 { font-family: var(--text); font-size: var(--t-sm); font-weight: 400; color: var(--muted); }
-.tool-group .rule { display: block; margin: 0.6rem 0 0.9rem; background: var(--line); }
+.tool-group .rule { display: block; margin: 0.6rem 0 0.9rem; }
 .tool-group ul { list-style: none; margin: 0; padding: 0; }
 .tool-group li { font-family: var(--text); font-weight: 500; font-size: var(--t-md); line-height: 1.45; color: var(--fg); }
 
