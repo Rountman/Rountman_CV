@@ -40,7 +40,7 @@ Objekt: x a y jsou podíly poloviny šířky a výšky okna (0 = střed), s = sc
 
 | Sekce | Co se děje | Rozsah scrollu | Objekt |
 |---|---|---|---|
-| Hero | jméno vlevo dole (Syne 800, clamp 64–168px), intro vpravo, 3 tenké soustředné kružnice, nápověda „Scroll“ dole | 100svh, bez pinu | x 0, y 0.12, s 1.25, o 1, koule |
+| Hero | jméno vlevo dole (Syne 800, clamp 64–168px; mobil `min(64px, 14vw)`, jméno má 5,94 em a víc se nevejde), intro vpravo, 3 tenké soustředné kružnice, nápověda „Scroll“ dole | 100svh, bez pinu | x 0, y 0.12, s 1.25, o 1, koule |
 | About | velký text vlevo (max. 22ch), objekt vpravo | ~110vh, bez pinu | x 0.55, y 0, s 0.75, o 0.9, koule |
 | Work | **hlavní moment.** Sticky 100vh: vlevo nadpis a panel se 2 rolemi, vpravo objekt. 3 etapy: čip (MIKROKLIMA, AR), telefon (Blendlens, PMI), prohlížeč (PekneWeby, freelance). Kroky dole | sekce 330vh, sticky (≈2,3 obrazovky) | x 0.5, y 0, s 0.95–1, o 1, tvar podle etapy |
 | Projects | nadpis vlevo, seznam vpravo, objekt malý vlevo dole | bez pinu | x −0.68, y −0.38, s 0.45, o 0.8, koule |

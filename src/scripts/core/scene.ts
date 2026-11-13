@@ -27,6 +27,9 @@ const SHAPES: [number, number, number, number][] = [
   [1.45, 0.92, 0.1, 9],
 ];
 const LERP_PER_FRAME = 0.08; // při 60 fps; přes delta time: k = 1 − 0.92^(dt·60)
+/** Úvodní moment stránky: po načtení scény opacity 0 → 1, scale 0.85 → 1.25 (u hera), power3.out */
+const INTRO_S = 1.2;
+const INTRO_FROM = 0.85 / 1.25;
 const TAU = Math.PI * 2;
 
 function superellipsoid(base: Float32Array, [a, b, c, n]: [number, number, number, number]) {
@@ -127,11 +130,13 @@ export function startScene(canvas: HTMLCanvasElement, state: CoreState) {
   const cur = { x: first.x, y: first.y, s: first.s, o: first.o, mx: 0, my: 0 };
   let time = 0;
   let yaw = 0;
-  let last = performance.now();
+  let last = -1;
   let raf = 0;
+  let intro = state.reduce ? 1 : 0; // reduced motion: rovnou finální stav
 
   function frame(now: number) {
-    const dt = Math.min(0.1, (now - last) / 1000);
+    if (last < 0) performance.mark('core:first-frame'); // měření vůči LCP (DevTools / Lighthouse)
+    const dt = last < 0 ? 0 : Math.min(0.1, (now - last) / 1000);
     last = now;
     time += dt;
 
@@ -153,8 +158,10 @@ export function startScene(canvas: HTMLCanvasElement, state: CoreState) {
     setShape(t.shapeA, t.shapeB, morph);
 
     mesh.position.set(cur.x * halfW, cur.y * halfH, 0);
-    mesh.scale.setScalar(cur.s);
-    material.opacity = cur.o;
+    if (intro < 1) intro = state.reduce ? 1 : Math.min(1, intro + dt / INTRO_S);
+    const e = 1 - (1 - intro) ** 3;
+    mesh.scale.setScalar(cur.s * (INTRO_FROM + (1 - INTRO_FROM) * e));
+    material.opacity = cur.o * e;
 
     if (reduce) {
       mesh.rotation.set(0.1, -0.35, 0);
@@ -187,6 +194,8 @@ export function startScene(canvas: HTMLCanvasElement, state: CoreState) {
     }
   });
 
-  canvas.classList.add('is-ready');
+  // shadery zkompilovat předem, ať první snímek intra netrvá stovky ms
+  build(state.mobile ? SEGMENTS.mobile : SEGMENTS.desktop);
+  renderer.compile(scene, camera);
   if (!document.hidden) raf = requestAnimationFrame(frame);
 }

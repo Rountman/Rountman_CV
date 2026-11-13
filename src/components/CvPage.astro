@@ -9,6 +9,7 @@ const other: Lang = lang === 'en' ? 'cs' : 'en';
 const { person, about, career, projects, skills, studies, ui } = content[lang];
 
 const [first, last] = person.name.split(' ');
+const initials = person.name.split(' ').map((w) => w[0]).join('');
 
 // Kotvy 3D objektu (storyboard v BRIEF.md): x, y = podíl poloviny okna, s = scale, o = opacity
 const core = (x: number, y: number, s: number, o: number, shape = 'sphere') => JSON.stringify({ x, y, s, o, shape });
@@ -30,8 +31,10 @@ const anchor = {
   <canvas class="core-canvas" data-core-canvas aria-hidden="true"></canvas>
   <div class="core-fallback" data-core-fallback aria-hidden="true"></div>
 
+  <div class="scroll-progress" data-scroll-progress aria-hidden="true"></div>
+
   <nav class="nav" aria-label={ui.navLabel}>
-    <a href="#top">{person.title} {person.name}</a>
+    <a class="mark" href="#top"><span aria-hidden="true">{initials}</span><span class="visually-hidden">{person.name}</span></a>
     <ul>
       <li><a href="#work">{ui.nav.work}</a></li>
       <li><a href="#projects">{ui.nav.projects}</a></li>
@@ -41,25 +44,21 @@ const anchor = {
   </nav>
 
   <main id="top">
-    <!-- HERO: jediný orchestrovaný moment při načtení -->
-    <section class="hero wrap-pad" data-hero-zoom data-core={anchor.hero}>
-      <div class="hero-name">
-        <div>
-          <h1 data-intro data-zoom-name>{first} <span class="l2">{last}</span></h1>
-        </div>
+    <!-- HERO: bez pinu. Jméno vlevo dole, intro vpravo; obojí vidět od prvního vykreslení (LCP).
+         Jediný úvodní moment je objekt (scripts/core) -->
+    <section class="hero" data-core={anchor.hero}>
+      <div class="rings" aria-hidden="true"><span></span><span></span><span></span></div>
+      <div class="hero-row">
+        <h1>{first}<br />{last}</h1>
+        <p class="intro">{person.intro}</p>
       </div>
-      <div class="hero-foot" data-zoom-fade>
-        <p data-intro-rise>{person.intro}</p>
-        <p class="meta" data-intro-rise>
-          {person.role}<br />{person.location}
-        </p>
-      </div>
+      <div class="hint" data-scroll-hint aria-hidden="true"><i></i>{ui.scrollHint}</div>
     </section>
 
-    <!-- ABOUT: slova se rozsvěcují podle scrollu -->
-    <section class="about block wrap" data-core={anchor.about} aria-labelledby="about-h">
+    <!-- ABOUT: velký text vlevo, objekt vpravo -->
+    <section class="about" data-core={anchor.about} aria-labelledby="about-h">
       <h2 id="about-h" class="visually-hidden">{ui.about}</h2>
-      <p data-scrub-words>{about.lead} <span class="rest">{about.rest}</span></p>
+      <p>{about.lead} <span class="rest">{about.rest}</span></p>
     </section>
 
     <!-- CAREER: hlavní scroll moment, horizontální pás + letopočet -->

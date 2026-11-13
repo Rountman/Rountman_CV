@@ -82,7 +82,8 @@ export function initCore() {
     return;
   }
 
-  // až po prvním vykreslení: load + idle (hero text a LCP nečekají na Three.js)
+  // až po prvním vykreslení: load → rAF → task (= po vykreslení snímku) → idle.
+  // Samotný load může přijít dřív než první paint (lokálně / z cache), proto ještě rAF
   const load = () =>
     import('./scene')
       .then(({ startScene }) => startScene(canvas, state))
@@ -90,10 +91,11 @@ export function initCore() {
         console.warn('[core] WebGL scene failed, using CSS fallback', err);
         useFallback();
       });
-  const schedule = () => {
+  const idle = () => {
     if ('requestIdleCallback' in window) requestIdleCallback(load, { timeout: 1200 });
     else setTimeout(load, 200);
   };
+  const schedule = () => requestAnimationFrame(() => setTimeout(idle, 0));
   if (document.readyState === 'complete') schedule();
   else addEventListener('load', schedule, { once: true });
 }

@@ -5,6 +5,7 @@
   --muted: #a9b0bf;
   --line: rgba(232, 234, 240, 0.14);
   --line-strong: rgba(232, 234, 240, 0.32);
+  --ring: rgba(232, 234, 240, 0.08);
 
   /* duhové barvy: jen 3D objekt a 2px progress bar, nikdy text */
   --iris-1: #7fd6e8;
@@ -23,7 +24,7 @@
   --t-lg: clamp(1.375rem, 1rem + 1.1vw, 1.875rem);
   --t-xl: clamp(2.75rem, 1.6rem + 3.4vw, 4.5rem);
   --t-about: clamp(1.75rem, 1rem + 2.4vw, 3.25rem);
-  --t-hero: clamp(4rem, 11vw, 10.5rem);
+  --t-hero: clamp(4rem, 11vw, 10.5rem); /* 64–168 px */
 
   --gutter: clamp(1.25rem, 4vw, 3.5rem);
   --max: 88rem;
@@ -98,50 +99,99 @@ main, .contact footer { position: relative; z-index: 1; }
   background: linear-gradient(var(--bg), rgba(11, 13, 18, 0));
 }
 .nav a { text-decoration: none; }
+.nav .mark { font-family: var(--display); font-weight: 800; font-size: 1.125rem; }
 .nav ul { display: flex; gap: 1.75rem; list-style: none; margin: 0; padding: 0; }
 .nav ul a { color: var(--muted); transition: color 0.2s; }
 .nav ul a:hover { color: var(--fg); }
 
-/* ───── Hero ───── */
+/* ───── Progress bar: 2px nahoře, jediné místo mimo objekt s duhovými barvami ───── */
+.scroll-progress {
+  position: fixed;
+  inset: 0 0 auto 0;
+  height: 2px;
+  z-index: 11;
+  transform: scaleX(0);
+  transform-origin: left;
+  background: linear-gradient(90deg, var(--iris-1), var(--iris-2), var(--iris-3), var(--iris-4));
+  pointer-events: none;
+}
+
+/* ───── Hero (100svh, bez pinu) ───── */
 .hero {
   position: relative;
   min-height: 100svh;
-  display: grid;
-  align-content: end;
-  padding-block: 7rem 3rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 0 var(--gutter) 4.5rem;
   overflow: clip;
 }
-.hero-name {
+/* 3 tenké soustředné kružnice kolem objektu (střed objektu: y 0.12 → 44 % výšky) */
+.rings { position: absolute; left: 50%; top: 44%; pointer-events: none; }
+.rings span {
   position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  pointer-events: none;
+  left: 50%;
+  top: 50%;
+  width: var(--d);
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  border: 1px solid var(--ring);
+  border-radius: 50%;
 }
-.hero-name > div { pointer-events: auto; }
+.rings span:nth-child(1) { --d: 62vmin; }
+.rings span:nth-child(2) { --d: 84vmin; }
+.rings span:nth-child(3) { --d: 108vmin; }
+.hero-row {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 2.5rem;
+  flex-wrap: wrap;
+}
 .hero h1 {
   font-family: var(--display);
   font-weight: 800;
   font-size: var(--t-hero);
   line-height: 0.9;
   letter-spacing: -0.03em;
-  text-align: center;
-  white-space: nowrap;
-  will-change: transform;
 }
-.hero h1 .l2 { display: block; }
-.hero h1 > div { padding-top: 0.16em; margin-top: -0.16em; }
-
-.hero-foot {
-  display: grid;
-  grid-template-columns: minmax(0, 34rem) auto;
-  justify-content: space-between;
-  gap: 2rem;
-  margin-top: 2.5rem;
-  align-items: end;
+.hero .intro {
+  /* vedle jména; zalomí se pod něj, až když zbude míň než 20ch (wrap se řídí flex-basis) */
+  flex: 1 1 20ch;
+  max-width: 26ch;
+  margin-bottom: 0.875rem;
+  color: var(--muted);
+  font-size: var(--t-md);
+  line-height: 1.5;
 }
-.hero-foot p:first-child { font-size: var(--t-md); line-height: 1.45; color: var(--muted); }
-.hero-foot .meta { text-align: right; color: var(--muted); font-size: var(--t-sm); }
+/* nápověda „Scroll“: linka s kapkou, zmizí po 40 px scrollu (třída .is-scrolled na <html>) */
+.hint {
+  position: absolute;
+  left: 50%;
+  bottom: 1.375rem;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.625rem;
+  font-size: 0.8125rem;
+  color: var(--muted);
+  transition: opacity 0.5s;
+}
+.hint i { position: relative; display: block; width: 1px; height: 2.875rem; background: var(--line-strong); overflow: hidden; }
+.hint i::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: -40%;
+  width: 1px;
+  height: 40%;
+  background: var(--fg);
+  animation: hint-drop 1.6s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+@keyframes hint-drop { to { transform: translateY(350%); } }
+.is-scrolled .hint { opacity: 0; }
 
 /* ───── Section heads ───── */
 .head {
@@ -164,14 +214,20 @@ main, .contact footer { position: relative; z-index: 1; }
 section { position: relative; }
 .block { padding-block: clamp(6rem, 14vw, 11rem); }
 
-/* ───── About ───── */
+/* ───── About: velký text vlevo (max. 22ch), objekt vpravo ───── */
+.about {
+  min-height: 110vh;
+  display: flex;
+  align-items: center;
+  padding-inline: var(--gutter);
+}
 .about p {
+  max-width: 22ch;
   font-family: var(--display);
   font-weight: 600;
   font-size: var(--t-about);
   line-height: 1.12;
   letter-spacing: -0.015em;
-  max-width: 22ch;
 }
 .about .rest { color: var(--muted); }
 
@@ -343,13 +399,16 @@ section.depth-on {
   padding-block: 0;
   overflow: clip;
 }
-.hero.depth-on .hero-foot { margin-bottom: 3rem; }
 
 /* ───── Mobil (<800 px) ───── */
 @media (max-width: 799px) {
   .nav ul { gap: 1rem; }
-  .hero-foot { grid-template-columns: 1fr; }
-  .hero-foot .meta { text-align: left; }
+  .hero-row { flex-direction: column; align-items: flex-start; gap: 1rem; }
+  .hero .intro { flex: none; }
+  /* jméno = 5.94 em v Syne 800; 64 px by na 390 px přeteklo */
+  .hero h1 { font-size: min(4rem, 14vw); }
+  /* objekt na mobilu: y 0.12 + 0.25 → střed 31.5 % výšky */
+  .rings { top: 31.5%; }
   .head { grid-template-columns: 1fr; gap: 0.5rem; }
   .career-inner { height: auto; display: block; padding-block: 6rem; }
   .career-side { display: block; padding-left: 0; }
@@ -373,4 +432,5 @@ section.depth-on {
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition: none !important; }
+  .hint i::after { animation: none; top: 0; height: 100%; opacity: 0.5; }
 }

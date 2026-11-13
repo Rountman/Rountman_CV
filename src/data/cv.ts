@@ -80,6 +80,7 @@ const en = {
     switchTo: 'CZ', // odkaz na druhou jazykovou verzi
     switchLabel: 'Česká verze',
     about: 'About',
+    scrollHint: 'Scroll',
     workLead: 'Six roles, from machine control panels to client web apps.',
     tools: 'Tools',
     toolsLead: 'What I have shipped with, grouped by where it runs.',
@@ -139,6 +140,7 @@ const cs: typeof en = {
     switchTo: 'EN',
     switchLabel: 'English version',
     about: 'O mně',
+    scrollHint: 'Scroll',
     workLead: 'Šest rolí, od ovládacích panelů strojů po webové aplikace pro klienty.',
     tools: 'Nástroje',
     toolsLead: 'S čím jsem dodával software, seskupené podle toho, kde běží.',
